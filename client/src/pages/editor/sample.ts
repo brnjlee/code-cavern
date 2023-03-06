@@ -1,0 +1,122 @@
+export const blocks = [
+  {
+    id: "mR0M3Bggbpw3UHDBdznEf",
+    type: "title",
+    children: [{ text: "Collaborative Block Text Editor" }],
+  },
+  {
+    id: "N3GsLRQ3pmWYXfRJWa3Hy",
+    type: "h1",
+    children: [{ text: "More than just text…" }],
+  },
+  {
+    id: "UtTGRvG8EYZTKCApR1qq2",
+    type: "paragraph",
+    children: [
+      {
+        text: "You can add tasks, embed videos, and more. And because it's open-source, you can easily extend this to support pretty much anything you want.",
+      },
+    ],
+  },
+  {
+    id: "4pWTQa4vSaF6nV0IVZNmW",
+    type: "paragraph",
+    children: [{ text: "This is a test " }],
+  },
+  {
+    id: "Jovc2uOIh_CRRN4TpyG77",
+    type: "paragraph",
+    children: [{ text: "rrrrr" }],
+  },
+  {
+    createdBy: 10,
+    id: "avlTvxJXvkqELwld7HlrC",
+    type: "h1",
+    children: [{ text: "dftheg aergggyyrd rd hrdjh" }],
+  },
+  {
+    id: "D7OVrWtNWZf_4B-NlJeh-",
+    type: "paragraph",
+    children: [{ text: "r rege egeg" }],
+  },
+  { id: "-EhgdpjS9XT873Lp_L9pb", type: "paragraph", children: [{ text: "" }] },
+  {
+    id: "gLWmQycWb6WN12zpiBth_",
+    type: "todo",
+    checked: true,
+    children: [{ text: "Add new blocks" }],
+  },
+  {
+    id: "bwlsq9ox5ukzUqJtub9Yt",
+    type: "todo",
+    children: [{ text: "Invite people to this document" }],
+    checked: false,
+  },
+  {
+    id: "ElOMRgF-l7K6__M27Igt2",
+    type: "todo",
+    children: [{ text: "Open block text editor" }],
+    checked: true,
+  },
+  {
+    id: "7da1Q2JnOam7d8QNVq1jS",
+    type: "todo",
+    children: [{ text: "Try dark mode" }],
+    checked: true,
+  },
+  {
+    id: "Mfdr0Is0vOwRN0vzXrIB7",
+    type: "todo",
+    children: [{ text: "Reorder blocks" }],
+    checked: true,
+  },
+  {
+    id: "-VFvYSU2x6rYleqpt0QJH",
+    type: "todo",
+    children: [{ text: "Watch video below" }],
+    checked: true,
+  },
+  {
+    id: "KSNzyt1Sm7owHbDJp8M-V",
+    type: "bulleted-list",
+    checked: false,
+    children: [{ text: " test" }],
+  },
+  {
+    id: "xLipcRn0UTsydVP1raHoN",
+    type: "paragraph",
+    checked: false,
+    children: [{ text: "" }],
+  },
+  {
+    id: "PFn7v5yNtgfdKlalTU2-y",
+    type: "paragraph",
+    children: [{ text: "test " }],
+  },
+  {
+    id: "1EW3-YNLg8uZrYhce_eyN",
+    type: "paragraph",
+    children: [{ text: "re" }],
+  },
+  {
+    id: "dSjB83nY4XBz9sF-b49nF",
+    type: "paragraph",
+    children: [{ text: "eyt tsry jsrthsrh" }],
+  },
+  { id: "y0gs1pH-JxDaz1gX2bctq", type: "paragraph", children: [{ text: "" }] },
+  { id: "TBW7Ukl3x1cTB3RwFcKxy", type: "paragraph", children: [{ text: "" }] },
+  { id: "Ix6AqMAY5CAo8i3veeUWI", type: "paragraph", children: [{ text: "" }] },
+  { id: "wna_SAVNMi52NvvenoCYq", type: "paragraph", children: [{ text: "" }] },
+  { id: "hvWJb1IEms3Uu5nuEzvt6", type: "paragraph", children: [{ text: "r" }] },
+  { id: "PYO4UvUYPCeUH2ZHHcNMK", type: "paragraph", children: [{ text: "r" }] },
+  { id: "BK_FZUtIfcb4Gv0vYNiKj", type: "paragraph", children: [{ text: "r" }] },
+  { id: "AtPR9HZA5ZodWPiY0iLlP", type: "paragraph", children: [{ text: "" }] },
+  { id: "0BqnulqehAWKl7v4UQ8mv", type: "paragraph", children: [{ text: "r" }] },
+  {
+    createdBy: 0,
+    id: "UitYqcgdslhj6Mswdax9D",
+    type: "codesandbox",
+    url: null,
+    children: [{ text: "" }],
+  },
+];
