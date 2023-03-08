@@ -1,13 +1,13 @@
-import {
-  faBold,
-  faItalic,
-  faStrikethrough,
-} from '@fortawesome/free-solid-svg-icons';
+import { FontBoldIcon, FontItalicIcon, StrikethroughIcon } from '@radix-ui/react-icons'
 import React, { ReactNode, useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
-import { Editor, Range } from 'slate';
-import { useFocused, useSlate } from 'slate-react';
+import { Editor, Text, Range, Transforms } from 'slate';
+import {ListsEditor} from '@prezly/slate-lists'
+import { useSlate } from 'slate-react';
 import { FormatButton } from './FormatButton';
+import { Select } from '../Select';
+import { FormatTypes } from './FormatTypes'
+import clsx from 'clsx'
 
 type PortalProps = { children?: ReactNode };
 
@@ -17,11 +17,14 @@ function Portal({ children }: PortalProps) {
     : null;
 }
 
-export function FormatToolbar() {
+export const FormatToolbar = () => {
   const [mounted, setMounted] = useState(false)
+  const [show, setShow] = useState(false)
+  const [selectedType, setSelectedType] = useState('')
   const ref = useRef<HTMLDivElement>(null);
   const editor = useSlate();
-  const focused = useFocused();
+
+
   useEffect(() => {
     setMounted(true)
       return () => setMounted(false)
@@ -34,17 +37,21 @@ export function FormatToolbar() {
     if (!el) {
       return;
     }
-
-    if (
-      !selection ||
-      !focused ||
+    console.info(selection)
+    console.log(!selection ||
       Range.isCollapsed(selection) ||
-      Editor.string(editor, selection) === ''
-    ) {
+      Editor.string(editor, selection) === '')
+    setShow(!!selection &&
+      !Range.isCollapsed(selection) &&
+      Editor.string(editor, selection) !== ''
+    )
+    if (!selection || !show) {
+      el.style.opacity = '0'
       el.removeAttribute('style');
       return;
     }
-
+    const isSameElement = selection.anchor.path[0] == selection.focus.path[0]
+    setSelectedType(isSameElement ? editor.children[selection.anchor.path[0]].type : '')
     const domSelection = window.getSelection();
     if (!domSelection?.rangeCount) {
       return;
@@ -60,21 +67,30 @@ export function FormatToolbar() {
     }px`;
   });
 
+  const changeElementType = (editor: Editor, type: string) => {
+    console.log('changing to', type)
+    ListsEditor.unwrapList(editor)
+    Transforms.setNodes(
+      editor,
+      {type}
+    )
+    setShow(false)
+    Transforms.deselect(editor)
+  }
+
   return (
-    mounted
-    ? (
-      <Portal>
-        {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
-        <div
-          ref={ref}
-          className="absolute opacity-0 flex flex-row rounded bg-black overflow-hidden"
-          onMouseDown={(e) => e.preventDefault()}
-        >
-          <FormatButton format="bold" icon={faBold} />
-          <FormatButton format="italic" icon={faItalic} />
-          <FormatButton format="strikethrough" icon={faStrikethrough} />
-        </div>
-      </Portal>
+    mounted ? (
+      <div
+        ref={ref}
+        className={clsx(show ? 'visible':'invisible',"absolute z-10 opacity-0 flex flex-row rounded bg-white shadow-3xl border border-gray-200 overflow-hidden transition-opacity")}
+        onMouseDown={(e) => e.preventDefault()}
+      >
+        {!!selectedType && <Select value={selectedType} items={FormatTypes} onValueChange={(type) => changeElementType(editor, type)}/>}
+        
+        <FormatButton format="bold" Icon={FontBoldIcon} />
+        <FormatButton format="italic" Icon={FontItalicIcon} />
+        <FormatButton format="strikethrough" Icon={StrikethroughIcon} />
+      </div>
     ): null
-  );
+  )
 }

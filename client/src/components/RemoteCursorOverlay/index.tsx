@@ -1,6 +1,7 @@
+import dynamic from 'next/dynamic'
 import {
-  CursorOverlayData,
   useRemoteCursorOverlayPositions,
+  CursorOverlayData,
 } from "@slate-yjs/react";
 import clsx from "clsx";
 import React, { CSSProperties, PropsWithChildren, useRef } from "react";

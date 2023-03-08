@@ -10,11 +10,12 @@ import {
   useDecorateRemoteCursors,
 } from '@slate-yjs/react';
 import { RenderLeafProps, Slate, withReact } from "slate-react";
-import classNames from "classnames";
+import { withListsReact, onKeyDown } from '@prezly/slate-lists';
 
 import { FormatToolbar } from "../../components/FormatToolbar";
-import { withMarkdown } from "../../plugins/withMarkdown";
+import { withDefaultBreak } from "../../plugins/withDefaultBreak";
 import { withNormalize } from "../../plugins/withNormalize";
+import { withListsPlugin } from "../../plugins/withListsPlugin";
 import { CustomEditable } from "../../components/CustomEditable";
 import { Leaf } from '../../components/Leaf/';
 import { ConnectionToggle } from "../../components/ConnectionToggle";
@@ -67,6 +68,7 @@ function DecoratedEditable() {
       className="max-w-4xl w-full flex-col break-words"
       decorate={decorate}
       renderLeaf={renderDecoratedLeaf}
+      onKeyDown={(event) => onKeyDown(editor, event)}
     />
   );
 }
@@ -75,38 +77,30 @@ let editor: any = undefined;
 export default () => {
   const [value, setValue] = useState<Descendant[]>([]);
   const [connected, setConnected] = useState(false);
-  // const [currentStates, setCurrentStates] = useState<StatesArray>([]);
+
   useEffect(() => {
     provider = new HocuspocusProvider({
-      url: "ws://localhost:1234/collaboration/12",
+      url: "ws://localhost:1234/collaboration/6",
       name: "",
       onConnect: () => setConnected(true),
       onDisconnect: () => setConnected(false),
       connect: false,
-      // onAwarenessUpdate: ({ states }) => {
-      //   setCurrentStates(states);
-      // },
     });
-
-    // document.addEventListener("mousemove", (event) => {
-    //   provider.setAwarenessField("user", {
-    //     name: "Kevin Jahns",
-    //     color: "#ffcc00",
-    //     mouseX: event.clientX,
-    //     mouseY: event.clientY,
-    //   });
-    // });
     const sharedType = provider.document.get("content", Y.XmlText) as Y.XmlText;
-    editor = withMarkdown(
-      withNormalize(
-        withReact(
-          withYHistory(
-            withCursors(
-              withYjs(createEditor(), sharedType, { autoConnect: false }),
-              provider.awareness,
-              {
-                data: randomCursorData(),
-              }
+    editor = withListsReact(
+      withListsPlugin(
+        withDefaultBreak(
+          withNormalize(
+            withReact(
+              withYHistory(
+                withCursors(
+                  withYjs(createEditor(), sharedType, { autoConnect: false }),
+                  provider.awareness,
+                  {
+                    data: randomCursorData(),
+                  }
+                )
+              )
             )
           )
         )
@@ -134,13 +128,12 @@ export default () => {
   }, [editor]);
 
   return (
-    <div className="flex justify-center my-32 mx-10">
+    <div className="flex justify-center mx-10">
       {editor && (
         <>
           <Slate value={value} onChange={setValue} editor={editor}>
             {/* <RemoteCursorOverlay className="flex justify-center my-32 mx-10"> */}
               <FormatToolbar />
-              {/* <CustomEditable className="max-w-4xl w-full flex-col break-words" /> */}
               <DecoratedEditable />
             {/* </RemoteCursorOverlay> */}
           </Slate>

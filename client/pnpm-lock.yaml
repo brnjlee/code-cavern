@@ -10,6 +10,7 @@ specifiers:
   '@fortawesome/free-solid-svg-icons': ^6.3.0
   '@fortawesome/react-fontawesome': ^0.2.0
   '@hocuspocus/provider': ^1.1.1
+  '@prezly/slate-lists': ^0.79.5
   '@radix-ui/react-dropdown-menu': ^2.0.3
   '@radix-ui/react-icons': ^1.2.0
   '@radix-ui/react-popover': ^1.0.4
@@ -26,6 +27,7 @@ specifiers:
   clsx: ^1.2.1
   eslint: 8.35.0
   eslint-config-next: 13.2.3
+  framer-motion: ^10.1.0
   is-hotkey: ^0.2.0
   nanoid: ^4.0.1
   next: 13.2.3
@@ -52,6 +54,7 @@ dependencies:
   '@fortawesome/free-solid-svg-icons': 6.3.0
   '@fortawesome/react-fontawesome': 0.2.0_d5rbrisxfyemehbvmdbryvgjte
   '@hocuspocus/provider': 1.1.1_fhmqfz4ob5c6ch7ccxaeydvr2y
+  '@prezly/slate-lists': 0.79.5_r76nwtfihukxfjp7woqt4golaa
   '@radix-ui/react-dropdown-menu': 2.0.3_zula6vjvt3wdocc4mwcxqa6nzi
   '@radix-ui/react-icons': 1.2.0_react@18.2.0
   '@radix-ui/react-popover': 1.0.4_zula6vjvt3wdocc4mwcxqa6nzi
@@ -66,6 +69,7 @@ dependencies:
   clsx: 1.2.1
   eslint: 8.35.0
   eslint-config-next: 13.2.3_ycpbpc6yetojsgtrx3mwntkhsu
+  framer-motion: 10.1.0_biqbaboplfbrettd7655fr4n2y
   is-hotkey: 0.2.0
   nanoid: 4.0.1
   next: 13.2.3_biqbaboplfbrettd7655fr4n2y
@@ -149,6 +153,19 @@ packages:
       react: 18.2.0
       tslib: 2.5.0
     dev: false
+
+  /@emotion/is-prop-valid/0.8.8:
+    resolution: {integrity: sha512-u5WtneEAr5IDG2Wv65yhunPSMLIpuKsbuOktRojfrEiEvRyC85LgPMZI63cr7NUqT8ZIGdSVg8ZKGxIug4lXcA==}
+    requiresBuild: true
+    dependencies:
+      '@emotion/memoize': 0.7.4
+    dev: false
+    optional: true
+
+  /@emotion/memoize/0.7.4:
+    resolution: {integrity: sha512-Ja/Vfqe3HpuzRsG1oBtWTHk2PGZ7GR+2Vz5iYGelAw8dx32K0y7PjVuxK6z1nMpZOqAFsRUPCkK1YjJ56qJlgw==}
+    dev: false
+    optional: true
 
   /@eslint/eslintrc/2.0.0:
     resolution: {integrity: sha512-fluIaaV+GyV24CCu/ggiHdV+j4RNh85yQnAYS/G2mZODZgGmmlrgCydjUcV3YvxCm9x8nMAfThsqTni4KiXT4A==}
@@ -436,6 +453,20 @@ packages:
       picocolors: 1.0.0
       tiny-glob: 0.2.9
       tslib: 2.5.0
+    dev: false
+
+  /@prezly/slate-lists/0.79.5_r76nwtfihukxfjp7woqt4golaa:
+    resolution: {integrity: sha512-fdqDUUhMQrs3jzbfubRFs6LwR1vkS7NGH+dc5veM11buzTvap1ysUvsBMCjH1+k7RCyhZwnulOgW1shF8v1ZdQ==}
+    peerDependencies:
+      react: ^16.9.0 || ^17.0.0 || ^18.0.0
+      slate: ^0.91.4
+      slate-react: ^0.91.7
+    dependencies:
+      is-hotkey: 0.2.0
+      react: 18.2.0
+      slate: 0.91.4
+      slate-react: 0.91.8_6tgy34rvmll7duwkm4ydcekf3u
+      uuid: 8.3.2
     dev: false
 
   /@radix-ui/number/1.0.0:
@@ -1896,6 +1927,19 @@ packages:
     resolution: {integrity: sha512-MhLuK+2gUcnZe8ZHlaaINnQLl0xRIGRfcGk2yl8xoQAfHrSsL3rYu6FCmBdkdbhc9EPlwyGHewaRsvwRMJtAlA==}
     dev: true
 
+  /framer-motion/10.1.0_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-A+xTdsLam8AMiXBfE7/VCy55BwG8Wvedx5c9k/J+LNM8dGm+/wObw+td4RUrhY+hUsPmgadUFYW7zuSe7RyG8Q==}
+    peerDependencies:
+      react: ^18.0.0
+      react-dom: ^18.0.0
+    dependencies:
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+      tslib: 2.5.0
+    optionalDependencies:
+      '@emotion/is-prop-valid': 0.8.8
+    dev: false
+
   /fs.realpath/1.0.0:
     resolution: {integrity: sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==}
     dev: false
@@ -3320,6 +3364,11 @@ packages:
   /util-deprecate/1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
     dev: true
+
+  /uuid/8.3.2:
+    resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
+    hasBin: true
+    dev: false
 
   /which-boxed-primitive/1.0.2:
     resolution: {integrity: sha512-bwZdv0AKLpplFY2KZRX6TvyuN7ojjr7lwkg6ml0roIy9YeuSr7JS372qlNW18UQYzgYK9ziGcerWqZOmEn9VNg==}

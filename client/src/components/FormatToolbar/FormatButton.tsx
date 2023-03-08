@@ -1,11 +1,9 @@
-import { IconDefinition } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
 import React from "react";
-import { Editor, Text, Transforms } from "slate";
+import { Editor, Text, Transforms, Node } from "slate";
 import { useSlate } from "slate-react";
 
-function isFormatActive(editor: Editor, format: string) {
+const isFormatActive = (editor: Editor, format: string) => {
   const [match] = Editor.nodes(editor, {
     match: (n) => Text.isText(n) && !n[format],
     mode: "all",
@@ -24,17 +22,18 @@ function toggleFormat(editor: Editor, format: string) {
 
 type FormatButtonProps = {
   format: string;
-  icon: IconDefinition;
+  Icon: any;
 };
 
-export function FormatButton({ format, icon }: FormatButtonProps) {
+export const FormatButton = ({ format, Icon }: FormatButtonProps) => {
   const editor = useSlate();
   const active = isFormatActive(editor, format);
+
 
   return (
     <button
       className={clsx(
-        "h-8 w-8 flex justify-center items-center hover:bg-gray-600"
+        "h-8 w-8 flex justify-center items-center hover:bg-gray-200"
       )}
       type="button"
       onMouseDown={(event) => {
@@ -42,10 +41,7 @@ export function FormatButton({ format, icon }: FormatButtonProps) {
         toggleFormat(editor, format);
       }}
     >
-      <FontAwesomeIcon
-        icon={icon}
-        className={active ? "text-primary" : "text-white"}
-      />
+      <Icon className={active ? "text-blue-500" : "text-black"} />
     </button>
   );
 }
