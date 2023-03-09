@@ -2,7 +2,8 @@ import styles from "./index.module.css";
 
 import { HocuspocusProvider } from "@hocuspocus/provider";
 import { withCursors, withYHistory, withYjs, YjsEditor } from "@slate-yjs/core";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, ReactNode } from "react";
+import ReactDOM from 'react-dom';
 import { Editor, Range, createEditor, Descendant,Text } from "slate";
 import {
   getRemoteCaretsOnLeaf,
@@ -11,6 +12,7 @@ import {
 } from '@slate-yjs/react';
 import { RenderLeafProps, Slate, withReact } from "slate-react";
 import { withListsReact, onKeyDown } from '@prezly/slate-lists';
+import { motion, AnimatePresence } from "framer-motion"
 
 import { FormatToolbar } from "../../components/FormatToolbar";
 import { withDefaultBreak } from "../../plugins/withDefaultBreak";
@@ -26,6 +28,14 @@ import { CursorData } from '../../types';
 import * as Y from "yjs";
 
 const COMMAND_KEY = '/'
+type PortalProps = { children?: ReactNode };
+
+function Portal({ children }: PortalProps) {
+  return typeof document === 'object'
+    ? ReactDOM.createPortal(children, document.body)
+    : null;
+}
+
 const renderDecoratedLeaf = (props: RenderLeafProps) => {
   getRemoteCursorsOnLeaf<CursorData, Text>(props.leaf).forEach((cursor) => {
     if (cursor.data) {
@@ -115,7 +125,7 @@ export default () => {
       const beforeRange = before && Editor.range(editor, before, start)
       const beforeText = beforeRange && Editor.string(editor, beforeRange)
       const beforeMatch = beforeText && beforeText.match(/([^/]+$)/)
-      
+      // console.log(beforeText, beforeMatch)
       if (beforeText) {
         if (beforeText[beforeText.length-1] === ' ') {
           closeCommandList()
@@ -125,6 +135,7 @@ export default () => {
         return
       }
     }
+    setTarget(null)
   }
 
   const onKeyDownHandler = (event: React.KeyboardEvent<HTMLDivElement>) => {
@@ -184,8 +195,9 @@ export default () => {
       {editor && (
         <>
           <Slate value={value} onChange={onChangeHandler} editor={editor}>
-            {/* <RemoteCursorOverlay className="flex justify-center my-32 mx-10"> */}
-              <CommandList target={target} close={closeCommandList} command={command} />
+              {target && (
+                <CommandList target={target} close={closeCommandList} />
+              )}
               <FormatToolbar />
               <DecoratedEditable />
             {/* </RemoteCursorOverlay> */}

@@ -11,7 +11,7 @@ const isFormatActive = (editor: Editor, format: string) => {
   return !match;
 }
 
-function toggleFormat(editor: Editor, format: string) {
+const toggleFormat = (editor: Editor, format: string) => {
   const isActive = isFormatActive(editor, format);
   Transforms.setNodes(
     editor,
