@@ -13,6 +13,12 @@ module.exports = {
       },
       fontSize: {
         '2xs': '0.7rem',
+      },
+      width: {
+        '150': '17rem'
+      },
+      backgroundColor: {
+        'gray-150': 'rgb(229 231 235)'
       }
     },
 

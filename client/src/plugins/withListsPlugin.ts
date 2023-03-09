@@ -5,10 +5,10 @@ import {ElementType} from '../types'
 
 export const withListsPlugin = withLists({
     isConvertibleToListTextNode(node: Node) {
-        return Element.isElementType(node, ElementType.TEXT);
+        return Element.isElementType(node, ElementType.PARAGRAPH);
     },
     isDefaultTextNode(node: Node) {
-        return Element.isElementType(node, ElementType.TEXT);
+        return Element.isElementType(node, ElementType.PARAGRAPH);
     },
     isListNode(node: Node, type?: ListType) {
         if (type) {
@@ -26,7 +26,7 @@ export const withListsPlugin = withLists({
         return Element.isElementType(node, ElementType.LIST_ITEM_TEXT);
     },
     createDefaultTextNode(props = {}) {
-        return { children: [{ text: '' }], ...props, type: ElementType.TEXT };
+        return { children: [{ text: '' }], ...props, type: ElementType.PARAGRAPH };
     },
     createListNode(type: ListType = ListType.UNORDERED, props = {}) {
         const nodeType = type === ListType.ORDERED ? ElementType.ORDERED_LIST : ElementType.UNORDERED_LIST;

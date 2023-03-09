@@ -10,7 +10,7 @@ export const Select = ({value, items, onValueChange}: SelectRootProps) => {
     <S.Item
       key={i}
       value={value}
-      className='text-[13px] whitespace-nowrap leading-none text-violet11 rounded-[3px] flex items-center h-[25px] pr-[35px] pl-[25px] relative hover:cursor-pointer hover:bg-gray-200 select-none data-[disabled]:text-mauve8 data-[disabled]:pointer-events-none data-[highlighted]:outline-none data-[highlighted]:bg-violet9 data-[highlighted]:text-violet1'
+      className='text-[13px] whitespace-nowrap leading-none text-violet11 rounded-[3px] flex items-center h-[25px] pr-[35px] pl-[25px] relative hover:cursor-pointer hover:bg-gray-100 select-none data-[disabled]:text-mauve8 data-[disabled]:pointer-events-none data-[highlighted]:outline-none data-[highlighted]:bg-violet9 data-[highlighted]:text-violet1'
     >
       <S.ItemText>{label}</S.ItemText>
       <S.ItemIndicator className="absolute left-0 w-[25px] inline-flex items-center justify-center">
@@ -22,7 +22,7 @@ export const Select = ({value, items, onValueChange}: SelectRootProps) => {
   return (
     <S.Root value={value} onValueChange={onValueChange}>
       <S.Trigger
-        className="inline-flex items-center justify-center px-[15px] text-[13px] leading-none h-auto gap-[5px] bg-white text-violet11 hover:bg-mauve3 hover:cursor-pointer hover:bg-gray-200 data-[placeholder]:text-violet9 border-gray-200 border-r outline-none"
+        className="inline-flex items-center justify-center px-[15px] text-[13px] leading-none h-auto gap-[5px] bg-white text-violet11 hover:bg-mauve3 hover:cursor-pointer hover:bg-gray-100 data-[placeholder]:text-violet9 border-gray-200 border-r outline-none"
         aria-label="Food"
       >
         <S.Value placeholder="Select an option" />

@@ -33,7 +33,7 @@ export const FormatButton = ({ format, Icon }: FormatButtonProps) => {
   return (
     <button
       className={clsx(
-        "h-8 w-8 flex justify-center items-center hover:bg-gray-200"
+        "h-8 w-8 flex justify-center items-center hover:bg-gray-100"
       )}
       type="button"
       onMouseDown={(event) => {

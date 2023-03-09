@@ -20,33 +20,37 @@ function Portal({ children }: PortalProps) {
 export const CommandList = ({target, close}:CommandListProps) => {
   const [mounted, setMounted] = useState(false)
   const [index, setIndex] = useState(0)
+  const selectionIndex = useRef(0)
   const [input, setInput] = useState('')
   const inputRef = useRef(input)
+  
   const ref = useRef<HTMLDivElement>(null)
   const editor = useSlate();
   const command = input.substring(1)
   
-
-  const commands = useMemo(() => CommandOptions.filter(({value, label}) =>
+  const filterCommands = (command: string) => CommandOptions.filter(({value, label}) =>
     label.toLowerCase().startsWith(command.toLowerCase())
-  ).slice(0, 10), [command])
+  ).slice(0, 10)
+
+  const commands = filterCommands(command)
+  const commandsLength = useRef(commands.length)
  
   useEffect(() => {
     setMounted(true)
     document.addEventListener("keydown", keyDownHandler);
+    document.addEventListener("keypress", keyPressHandler);
       return () => {
         document.removeEventListener("keydown", keyDownHandler);
+        document.removeEventListener("keypress", keyPressHandler);
         setMounted(false)
       }
   }, [])
 
   useEffect(() => {
-    console.log('target', target)
     if (target) {
       // console.log(target,input,command,commands)
       const el = ref.current
       if (el) {
-        console.log('has element')
         const domRange = ReactEditor.toDOMRange(editor, target)
         const rect = domRange.getBoundingClientRect()
         el.style.top = `${rect.top + window.pageYOffset + 24}px`
@@ -59,40 +63,71 @@ export const CommandList = ({target, close}:CommandListProps) => {
     switch (e.key) {
       case 'Backspace':
         if (inputRef.current.length === 1) close()
+        setIndex(0)
+        selectionIndex.current -= 1
         setInput(prev => {
-          inputRef.current = prev.substring(0,prev.length-1)
-          return prev.substring(0,prev.length-1)
+          const newInput = prev.substring(0,prev.length-1)
+          commandsLength.current = filterCommands(newInput.substring(1)).length
+          inputRef.current = newInput
+          return newInput
         })
         break
       case 'ArrowUp':
         e.preventDefault()
-        setIndex(index === 0 ? commands.length-1 : index-1)
+        setIndex(prev => prev === 0 ? commandsLength.current-1 : prev-1)
         break
       case 'ArrowDown':
         e.preventDefault()
-        setIndex(index >= commands.length-1 ? 0 : index+1)
+        setIndex(prev => prev >= commandsLength.current-1 ? 0 : prev+1)
         break
-      default:
-        setInput(prev => {
-          inputRef.current = prev+e.key
-          return prev+e.key
-        })
+      case 'ArrowLeft':
+        if (selectionIndex.current === 1) close()
+        selectionIndex.current -= 1
+        break
+      case 'ArrowRight':
+        if (selectionIndex.current === inputRef.current.length) close()
+        selectionIndex.current += 1
+        break
+      case 'Tab':
+      case ' ':
+        close()
         break
     }
   }
+  const keyPressHandler = (e:KeyboardEvent) => {
+    setIndex(0)
+    selectionIndex.current += 1
+    setInput(prev => {
+      const newInput = prev+e.key
+      inputRef.current = newInput
+      commandsLength.current = filterCommands(newInput.substring(1)).length
+      return newInput
+    })
+  }
 
-  const renderCommands = commands.map(({value, label}, i) => (
-    <div
-      key={value}
-      style={{
-        padding: '1px 3px',
-        borderRadius: '3px',
-        background: i === 0 ? '#B4D5FF' : 'transparent',
-      }}
-    >
-      {label}
-    </div>
-  ))
+  const renderCommands = commands.map(({value, label,description, image}, key) => {
+    const isSelected = commands.map(e => e.value).indexOf(value) === index
+    return (
+      <div
+        key={value}
+        className={clsx( isSelected && 'bg-gray-100', 'flex py-1 rounded', 'hover:bg-gray-100')}
+        role="button"
+        tabIndex={0}
+      >
+        <img
+          src={image}
+          className={clsx(isSelected && 'border-gray-300', 'border-gray-200','h-10 w-10 border object-cover rounded mx-2 bg-white')}
+          alt={label}
+        />
+        <div
+          className='flex flex-col justify-center'
+        >
+          <span className='text-sm'>{label}</span>  
+          <span className='text-xs text-gray-400'>{description}</span>
+        </div>
+      </div>
+    )
+  })
   return (
     <div
       ref={ref}
@@ -100,9 +135,9 @@ export const CommandList = ({target, close}:CommandListProps) => {
         top: '-9999px',
         left: '-9999px',
       }}
-      className={clsx(mounted ? 'scale-1 opacity-100': 'scale-0 opacity-0','transition-scale origin-top-left absolute p-3 z-10 bg-white rounded shadow-3xl border border-gray-200 ')}
+      className={clsx(mounted ? 'scale-1 opacity-100': 'scale-0 opacity-0','command-list-open w-150 max-h-80 overflow-y-scroll transition-scale origin-top-left absolute p-1 z-10 bg-white rounded shadow-3xl border border-gray-200 ')}
     >
-      {commands.length ? renderCommands: 'No results'}
+      {commands.length ? renderCommands: <span className='text-sm text-gray-500 mx-2'>No results</span>}
     </div>
   )
 }

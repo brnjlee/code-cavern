@@ -12,11 +12,11 @@ export type CustomText = {
   italic?: boolean;
   underline?: boolean;
   strikethrough?: boolean;
-  text: string;
+  paragraph: string;
 };
 
 export enum ElementType {
-  TEXT = 'text',
+  PARAGRAPH = 'paragraph',
   INLINE_CODE = "inline-code",
   HEADING_ONE = "heading-one",
   HEADING_TWO = "heading-two",
@@ -28,8 +28,8 @@ export enum ElementType {
   BLOCK_QUOTE = 'block-quote'
 }
 
-export type TEXT = {
-  type: ElementType.TEXT;
+export type Paragraph = {
+  type: ElementType.PARAGRAPH;
   children: Descendant[];
 };
 
@@ -79,7 +79,7 @@ export type BlockQuote = {
 };
 
 export type CustomElement =
-  | Text
+  | Paragraph
   | InlineCode
   | HeadingOne
   | HeadingTwo

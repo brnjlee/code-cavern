@@ -116,26 +116,30 @@ export default () => {
   }, []);
 
   const onChangeHandler = (value:Descendant[]) => {
-    setValue(value)
-    const { selection } = editor
-    if (selection && Range.isCollapsed(selection) && target) {
-      const [start] = Range.edges(selection)
-      const wordBefore = Editor.before(editor, start, { unit: 'word' })
-      const before = wordBefore && Editor.before(editor, wordBefore)
-      const beforeRange = before && Editor.range(editor, before, start)
-      const beforeText = beforeRange && Editor.string(editor, beforeRange)
-      const beforeMatch = beforeText && beforeText.match(/([^/]+$)/)
-      // console.log(beforeText, beforeMatch)
-      if (beforeText) {
-        if (beforeText[beforeText.length-1] === ' ') {
-          closeCommandList()
-          return
-        }
-        setCommand(beforeMatch ? beforeMatch[1] : '')
-        return
-      }
-    }
-    setTarget(null)
+    // setValue(value)
+    // // closeCommandList()
+    // const { selection } = editor
+    // // console.log(selection)
+    // // if (selection && selection.anchor)
+    // if (selection && Range.isCollapsed(selection) && target) {
+    //   console.log('test')
+    //   const [start] = Range.edges(selection)
+    //   const wordBefore = Editor.before(editor, start, { unit: 'word' })
+    //   const before = wordBefore && Editor.before(editor, wordBefore)
+    //   const beforeRange = before && Editor.range(editor, before, start)
+    //   const beforeText = beforeRange && Editor.string(editor, beforeRange)
+    //   const beforeMatch = beforeText && beforeText.match(/([^/]+$)/)
+    //   console.log(beforeText, beforeMatch)
+    //   if (beforeText) {
+    //     if (beforeText[beforeText.length-1] === ' ') {
+    //       closeCommandList()
+    //       return
+    //     }
+    //     setCommand(beforeMatch ? beforeMatch[1] : '')
+    //     return
+    //   }
+    // }
+    // setTarget(null)
   }
 
   const onKeyDownHandler = (event: React.KeyboardEvent<HTMLDivElement>) => {
