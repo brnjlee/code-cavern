@@ -3,7 +3,7 @@ import styles from "./index.module.css";
 import { HocuspocusProvider } from "@hocuspocus/provider";
 import { withCursors, withYHistory, withYjs, YjsEditor } from "@slate-yjs/core";
 import React, { useCallback, useEffect, useState } from "react";
-import { createEditor, Descendant,Text } from "slate";
+import { Editor, Range, createEditor, Descendant,Text } from "slate";
 import {
   getRemoteCaretsOnLeaf,
   getRemoteCursorsOnLeaf,
@@ -20,11 +20,13 @@ import { CustomEditable } from "../../components/CustomEditable";
 import { Leaf } from '../../components/Leaf/';
 import { ConnectionToggle } from "../../components/ConnectionToggle";
 import { RemoteCursorOverlay } from '../../components/RemoteCursorOverlay';
+import {CommandList} from '../../components/CommandList';
 import { addAlpha, randomCursorData } from '../../utils';
 import { CursorData } from '../../types';
 import * as Y from "yjs";
 
-function renderDecoratedLeaf(props: RenderLeafProps) {
+const COMMAND_KEY = '/'
+const renderDecoratedLeaf = (props: RenderLeafProps) => {
   getRemoteCursorsOnLeaf<CursorData, Text>(props.leaf).forEach((cursor) => {
     if (cursor.data) {
       props.children = (
@@ -61,22 +63,17 @@ function renderDecoratedLeaf(props: RenderLeafProps) {
   });
   return <Leaf {...props} />;
 }
-function DecoratedEditable() {
-  const decorate = useDecorateRemoteCursors();
-  return (
-    <CustomEditable
-      className="max-w-4xl w-full flex-col break-words"
-      decorate={decorate}
-      renderLeaf={renderDecoratedLeaf}
-      onKeyDown={(event) => onKeyDown(editor, event)}
-    />
-  );
-}
+
+
+
 let provider: any = undefined;
 let editor: any = undefined;
 export default () => {
   const [value, setValue] = useState<Descendant[]>([]);
   const [connected, setConnected] = useState(false);
+  const [target, setTarget] = useState<Range | null>()
+  const [index, setIndex] = useState(0)
+  const [command, setCommand] = useState('')
 
   useEffect(() => {
     provider = new HocuspocusProvider({
@@ -90,7 +87,7 @@ export default () => {
     editor = withListsReact(
       withListsPlugin(
         withDefaultBreak(
-          withNormalize(
+          // withNormalize(
             withReact(
               withYHistory(
                 withCursors(
@@ -101,12 +98,67 @@ export default () => {
                   }
                 )
               )
-            )
+            // )
           )
         )
       )
     );
   }, []);
+
+  const onChangeHandler = (value:Descendant[]) => {
+    setValue(value)
+    const { selection } = editor
+    if (selection && Range.isCollapsed(selection) && target) {
+      const [start] = Range.edges(selection)
+      const wordBefore = Editor.before(editor, start, { unit: 'word' })
+      const before = wordBefore && Editor.before(editor, wordBefore)
+      const beforeRange = before && Editor.range(editor, before, start)
+      const beforeText = beforeRange && Editor.string(editor, beforeRange)
+      const beforeMatch = beforeText && beforeText.match(/([^/]+$)/)
+      
+      if (beforeText) {
+        if (beforeText[beforeText.length-1] === ' ') {
+          closeCommandList()
+          return
+        }
+        setCommand(beforeMatch ? beforeMatch[1] : '')
+        return
+      }
+    }
+  }
+
+  const onKeyDownHandler = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === COMMAND_KEY) {
+      openCommandList()
+    }
+  }
+
+  const openCommandList = () => {
+    const { selection } = editor
+    setTarget(selection)
+    console.log('open')
+    document.addEventListener("click", closeCommandList);
+  }
+  const closeCommandList = () => {
+    setTarget(null)
+    console.log('close')
+    document.removeEventListener("click", closeCommandList);
+  }
+  
+  const DecoratedEditable = () => {
+    const decorate = useDecorateRemoteCursors();
+    return (
+      <CustomEditable
+        className="max-w-4xl w-full flex-col break-words"
+        decorate={decorate}
+        renderLeaf={renderDecoratedLeaf}
+        onKeyDown={(event) => {
+          onKeyDownHandler(event)
+          onKeyDown(editor, event)
+        }}
+      />
+    );
+  }
 
   const toggleConnection = useCallback(() => {
     if (connected) {
@@ -131,13 +183,14 @@ export default () => {
     <div className="flex justify-center mx-10">
       {editor && (
         <>
-          <Slate value={value} onChange={setValue} editor={editor}>
+          <Slate value={value} onChange={onChangeHandler} editor={editor}>
             {/* <RemoteCursorOverlay className="flex justify-center my-32 mx-10"> */}
+              <CommandList target={target} close={closeCommandList} command={command} />
               <FormatToolbar />
               <DecoratedEditable />
             {/* </RemoteCursorOverlay> */}
           </Slate>
-            <ConnectionToggle connected={connected} onClick={toggleConnection} />
+          <ConnectionToggle connected={connected} onClick={toggleConnection} />
         </>
       )}
     </div>

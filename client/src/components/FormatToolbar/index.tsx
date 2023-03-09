@@ -6,7 +6,7 @@ import {ListsEditor} from '@prezly/slate-lists'
 import { useSlate } from 'slate-react';
 import { FormatButton } from './FormatButton';
 import { Select } from '../Select';
-import { FormatTypes } from './FormatTypes'
+import { FormatOptions } from './FormatOptions'
 import clsx from 'clsx'
 
 type PortalProps = { children?: ReactNode };
@@ -37,16 +37,12 @@ export const FormatToolbar = () => {
     if (!el) {
       return;
     }
-    console.info(selection)
-    console.log(!selection ||
-      Range.isCollapsed(selection) ||
-      Editor.string(editor, selection) === '')
     setShow(!!selection &&
       !Range.isCollapsed(selection) &&
       Editor.string(editor, selection) !== ''
     )
     if (!selection || !show) {
-      el.style.opacity = '0'
+      // el.style.opacity = '0'
       el.removeAttribute('style');
       return;
     }
@@ -68,7 +64,6 @@ export const FormatToolbar = () => {
   });
 
   const changeElementType = (editor: Editor, type: string) => {
-    console.log('changing to', type)
     ListsEditor.unwrapList(editor)
     Transforms.setNodes(
       editor,
@@ -82,10 +77,10 @@ export const FormatToolbar = () => {
     mounted ? (
       <div
         ref={ref}
-        className={clsx(show ? 'visible':'invisible',"absolute z-10 opacity-0 flex flex-row rounded bg-white shadow-3xl border border-gray-200 overflow-hidden transition-opacity")}
+        className={clsx(show ? 'visible opacity-100':'invisible opacity-0',"absolute z-10 flex flex-row rounded bg-white shadow-3xl border border-gray-200 overflow-hidden transition-opacity")}
         onMouseDown={(e) => e.preventDefault()}
       >
-        {!!selectedType && <Select value={selectedType} items={FormatTypes} onValueChange={(type) => changeElementType(editor, type)}/>}
+        {!!selectedType && <Select value={selectedType} items={FormatOptions} onValueChange={(type) => changeElementType(editor, type)}/>}
         
         <FormatButton format="bold" Icon={FontBoldIcon} />
         <FormatButton format="italic" Icon={FontItalicIcon} />

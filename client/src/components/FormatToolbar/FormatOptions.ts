@@ -1,5 +1,5 @@
 import {ElementType} from '../../types'
-export const FormatTypes = [
+export const FormatOptions = [
   {value: ElementType.PARAGRAPH, label: 'Paragraph'},
   {value: ElementType.HEADING_ONE, label: 'Heading 1'},
   {value: ElementType.HEADING_TWO, label: 'Heading 2'},
