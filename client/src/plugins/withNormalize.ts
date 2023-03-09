@@ -14,7 +14,7 @@ export function withNormalize(editor: Editor) {
     Transforms.insertNodes(
       editor,
       {
-        type: ElementType.PARAGRAPH,
+        type: ElementType.TEXT,
         children: [{ text: "" }],
       },
       { at: [0] }

@@ -35,7 +35,7 @@ export const CommandList = ({target, close}:CommandListProps) => {
     setMounted(true)
     document.addEventListener("keydown", keyDownHandler);
       return () => {
-        // document.removeEventListener("keydown", keyDownHandler);
+        document.removeEventListener("keydown", keyDownHandler);
         setMounted(false)
       }
   }, [])

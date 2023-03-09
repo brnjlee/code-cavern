@@ -7,7 +7,7 @@ export const withDefaultBreak = (editor: Editor) => {
     if (selection) {
       Transforms.insertNodes(editor, {
         children: [{text: ""}],
-        type: ElementType.PARAGRAPH
+        type: ElementType.TEXT
       })
       return
     }

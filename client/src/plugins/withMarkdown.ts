@@ -211,7 +211,7 @@ export function withMarkdown(editor: Editor) {
         });
         Transforms.setNodes(
           editor,
-          { type: "paragraph" },
+          { type: "text" },
           { match: (n) => Editor.isBlock(editor, n) }
         );
         const marks = Editor.marks(editor) ?? {};
@@ -237,11 +237,11 @@ export function withMarkdown(editor: Editor) {
         if (
           !Editor.isEditor(block) &&
           Element.isElement(block) &&
-          block.type !== "paragraph" &&
+          block.type !== "text" &&
           Point.equals(selection.anchor, start)
         ) {
           const newProperties: Partial<Element> = {
-            type: "paragraph",
+            type: "text",
           };
           Transforms.setNodes(editor, newProperties);
           return;

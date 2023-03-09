@@ -1,6 +1,6 @@
 import {ElementType} from '../../types'
 export const CommandOptions = [
-  {value: ElementType.PARAGRAPH, label: 'Paragraph'},
+  {value: ElementType.TEXT, label: 'text'},
   {value: ElementType.HEADING_ONE, label: 'Heading 1'},
   {value: ElementType.HEADING_TWO, label: 'Heading 2'},
   {value: ElementType.HEADING_THREE, label: 'Heading 3'},
