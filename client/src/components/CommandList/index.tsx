@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { Editor, Text, Range, Transforms } from 'slate';
 import { useSlate, ReactEditor } from 'slate-react';
 import clsx from 'clsx'
+import {ListsEditor} from '@prezly/slate-lists'
 
 import {CommandOptions} from './CommandOptions';
 
@@ -20,6 +21,7 @@ function Portal({ children }: PortalProps) {
 export const CommandList = ({target, close}:CommandListProps) => {
   const [mounted, setMounted] = useState(false)
   const [index, setIndex] = useState(0)
+  const indexRef = useRef(index)
   const selectionIndex = useRef(0)
   const [input, setInput] = useState('')
   const inputRef = useRef(input)
@@ -33,7 +35,7 @@ export const CommandList = ({target, close}:CommandListProps) => {
   ).slice(0, 10)
 
   const commands = filterCommands(command)
-  const commandsLength = useRef(commands.length)
+  const commandsRef = useRef(commands)
  
   useEffect(() => {
     setMounted(true)
@@ -48,7 +50,6 @@ export const CommandList = ({target, close}:CommandListProps) => {
 
   useEffect(() => {
     if (target) {
-      // console.log(target,input,command,commands)
       const el = ref.current
       if (el) {
         const domRange = ReactEditor.toDOMRange(editor, target)
@@ -61,24 +62,39 @@ export const CommandList = ({target, close}:CommandListProps) => {
 
   const keyDownHandler = (e:KeyboardEvent) => {
     switch (e.key) {
+      case 'Enter':
+        e.preventDefault()
+        const selected = commandsRef.current[indexRef.current]?.value
+        changeElementType(editor, selected)
+        close()
+        break
       case 'Backspace':
         if (inputRef.current.length === 1) close()
         setIndex(0)
+        indexRef.current = 0
         selectionIndex.current -= 1
         setInput(prev => {
           const newInput = prev.substring(0,prev.length-1)
-          commandsLength.current = filterCommands(newInput.substring(1)).length
+          commandsRef.current = filterCommands(newInput.substring(1))
           inputRef.current = newInput
           return newInput
         })
         break
       case 'ArrowUp':
         e.preventDefault()
-        setIndex(prev => prev === 0 ? commandsLength.current-1 : prev-1)
+        setIndex(prev => {
+          const newIndex = prev === 0 ? commandsRef.current.length-1 : prev-1
+          indexRef.current = newIndex
+          return newIndex
+        })
         break
       case 'ArrowDown':
         e.preventDefault()
-        setIndex(prev => prev >= commandsLength.current-1 ? 0 : prev+1)
+        setIndex(prev => {
+          const newIndex = prev >= commandsRef.current.length-1 ? 0 : prev+1
+          indexRef.current = newIndex
+          return newIndex
+        })
         break
       case 'ArrowLeft':
         if (selectionIndex.current === 1) close()
@@ -96,13 +112,42 @@ export const CommandList = ({target, close}:CommandListProps) => {
   }
   const keyPressHandler = (e:KeyboardEvent) => {
     setIndex(0)
+    indexRef.current = 0
     selectionIndex.current += 1
     setInput(prev => {
       const newInput = prev+e.key
       inputRef.current = newInput
-      commandsLength.current = filterCommands(newInput.substring(1)).length
+      commandsRef.current = filterCommands(newInput.substring(1))
       return newInput
     })
+  }
+
+  const changeElementType = (editor: Editor, type: string) => {
+    ListsEditor.unwrapList(editor)
+    const { selection } = editor
+    if (selection) {
+      const {text} = Editor.node(editor, selection)[0]
+      if (text.length === inputRef.current.length) {
+        Transforms.removeNodes(editor)
+      }
+      else {
+        console.log(inputRef.current.length)
+        for (let i = 0; i < inputRef.current.length; i++) {
+          editor.deleteBackward('character')
+        }
+      }
+      const isList = type === 'ordered-list' || type === 'unordered-list'
+      const newChildren = isList ?[{ 
+        type: "list-item", children: [{ type: 'list-item-text', children: [{text: "" }]}]
+      }] : [{
+        text: ''
+      }]
+      console.log(newChildren, type, isList)
+      Transforms.insertNodes(
+          editor,
+          { type, children: newChildren }
+      )
+    }
   }
 
   const renderCommands = commands.map(({value, label,description, image}, key) => {
@@ -113,6 +158,7 @@ export const CommandList = ({target, close}:CommandListProps) => {
         className={clsx( isSelected && 'bg-gray-100', 'flex py-1 rounded', 'hover:bg-gray-100')}
         role="button"
         tabIndex={0}
+        onClick={() => changeElementType(editor, value)}
       >
         <img
           src={image}
@@ -137,7 +183,12 @@ export const CommandList = ({target, close}:CommandListProps) => {
       }}
       className={clsx(mounted ? 'scale-1 opacity-100': 'scale-0 opacity-0','command-list-open w-150 max-h-80 overflow-y-scroll transition-scale origin-top-left absolute p-1 z-10 bg-white rounded shadow-3xl border border-gray-200 ')}
     >
-      {commands.length ? renderCommands: <span className='text-sm text-gray-500 mx-2'>No results</span>}
+      {commands.length ? (
+        <>
+          <div className='text-xs text-gray-400 p-2 font-semibold'>Text blocks</div>
+          {renderCommands}
+        </>
+      ): <span className='text-sm text-gray-500 mx-2'>No results</span>}
     </div>
   )
 }
