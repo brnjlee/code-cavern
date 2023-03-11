@@ -19,11 +19,11 @@ import { withDefaultBreak } from "../../plugins/withDefaultBreak";
 import { withNormalize } from "../../plugins/withNormalize";
 import { withListsPlugin } from "../../plugins/withListsPlugin";
 import { CustomEditable } from "../../components/CustomEditable";
-import { Leaf } from '../../components/Leaf/';
+import { Leaf } from '../../components/Leaf';
 import { ConnectionToggle } from "../../components/ConnectionToggle";
 import { RemoteCursorOverlay } from '../../components/RemoteCursorOverlay';
 import {CommandList} from '../../components/CommandList';
-import { addAlpha, randomCursorData } from '../../utils';
+import { addAlpha, randomCursorData } from '../../utils/editor';
 import { CursorData } from '../../types';
 import * as Y from "yjs";
 
@@ -113,6 +113,12 @@ export default () => {
         )
       )
     );
+    provider.connect();
+    return () => {
+      if (provider) {
+        provider.disconnect()
+      }
+    }
   }, []);
 
   const onChangeHandler = (value:Descendant[]) => {
@@ -183,12 +189,14 @@ export default () => {
     provider.connect();
   }, [provider, connected]);
 
-  useEffect(() => {
-    provider.connect();
-    return () => {
-      provider.disconnect()
-    };
-  }, [provider]);
+  // useEffect(() => {
+  //   provider.connect();
+  //   console.log('connect')
+  //   return () => {
+  //     console.log('disconnect')
+  //     provider.disconnect()
+  //   };
+  // }, [provider]);
   useEffect(() => {
     YjsEditor.connect(editor);
     return () => YjsEditor.disconnect(editor);
