@@ -16,7 +16,6 @@ import "codemirror/mode/shell/shell";
 import "codemirror/mode/rust/rust";
 import "codemirror/mode/haskell/haskell";
 
-
 import "codemirror/addon/edit/closebrackets";
 import "codemirror/addon/edit/closetag";
 import "codemirror/addon/hint/show-hint";
@@ -32,6 +31,7 @@ import "codemirror/addon/fold/foldgutter.css";
 
 import "codemirror/lib/codemirror.css";
 import "codemirror/theme/dracula.css";
+import "codemirror/theme/ayu-mirage.css";
 import "codemirror/theme/monokai.css";
 import "codemirror/theme/ambiance.css";
 import "codemirror/theme/material-darker.css";
