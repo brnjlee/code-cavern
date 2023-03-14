@@ -125,7 +125,6 @@ const TabContainer = () => {
 
 	const handleDragEnd = (event) => {
 		const { active, over } = event;
-		console.info(active, over);
 		if (over) {
 			if (conatinerIds.has(over.id)) {
 				console.log("move to ", over.id);
