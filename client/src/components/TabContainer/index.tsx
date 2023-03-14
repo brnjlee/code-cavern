@@ -111,7 +111,7 @@ const TabContainer = () => {
 
 	const handleDragOver = (event) => {
 		const { over } = event;
-		if (conatinerIds.has(over.id)) {
+		if (over && conatinerIds.has(over.id)) {
 			setHoveringOver(over.id);
 		} else {
 			setHoveringOver("");
@@ -126,21 +126,24 @@ const TabContainer = () => {
 	const handleDragEnd = (event) => {
 		const { active, over } = event;
 		console.info(active, over);
-		if (conatinerIds.has(over.id)) {
-			console.log("move to ", over.id);
-		} else if (active.id !== over.id) {
-			setTabs((tabs) => {
-				const oldIndex = tabs.indexOf(active.id);
-				const newIndex = tabs.indexOf(over.id);
+		if (over) {
+			if (conatinerIds.has(over.id)) {
+				console.log("move to ", over.id);
+			} else if (active.id !== over.id) {
+				setTabs((tabs) => {
+					const oldIndex = tabs.indexOf(active.id);
+					const newIndex = tabs.indexOf(over.id);
 
-				return arrayMove(tabs, oldIndex, newIndex);
-			});
+					return arrayMove(tabs, oldIndex, newIndex);
+				});
+			}
 		}
 		setActiveId(null);
+		setHoveringOver("");
 	};
 
 	return (
-		<div className="h-screen bg-gray-200 rounded m-20 grid h-full grid-cols-5 grid-rows-3 grid-rows-[2.5rem_auto]">
+		<div className="relative bg-gray-200 rounded grid h-full grid-cols-5 grid-rows-3 grid-rows-[2.5rem_auto]">
 			<DndContext
 				sensors={sensors}
 				collisionDetection={rectIntersection}
@@ -155,7 +158,7 @@ const TabContainer = () => {
 					</div>
 				</SortableContext>
 				<DragOverlay>{activeId ? renderItem : null}</DragOverlay>
-				<HoverOverlay at={hoveringOver} />
+				<HoverOverlay hoveringOver={hoveringOver} />
 				{renderContainers}
 			</DndContext>
 		</div>
