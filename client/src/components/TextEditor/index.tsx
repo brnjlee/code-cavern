@@ -201,7 +201,7 @@ export default () => {
 	}, [editor]);
 
 	return (
-		<div className="flex justify-center mx-10">
+		<div className="flex h-full justify-center overflow-y-auto">
 			{editor && (
 				<>
 					<Slate value={value} onChange={onChangeHandler} editor={editor}>

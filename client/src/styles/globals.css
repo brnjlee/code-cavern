@@ -87,3 +87,9 @@ ol ol {
 	user-select: none;
 	color: white;
 }
+.react-codemirror2 {
+	width: 100%;
+}
+.CodeMirror {
+	width: 100% !important;
+}

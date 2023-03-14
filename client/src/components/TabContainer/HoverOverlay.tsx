@@ -1,10 +1,11 @@
 import React, { useCallback } from "react";
 import clsx from "clsx";
-type HoverOverlay = {
-	hoveringOver: string;
-};
-const HoverOverlay = ({ hoveringOver }: HoverOverlay) => {
-	console.log(hoveringOver);
+import {UniqueIdentifier
+} from "@dnd-kit/core";
+
+const HoverOverlay = ({ hoveringOver }: {
+	hoveringOver: UniqueIdentifier;
+}) => {
 	const className = () => {
 		switch (hoveringOver) {
 			case "top":
@@ -20,7 +21,7 @@ const HoverOverlay = ({ hoveringOver }: HoverOverlay) => {
 	return (
 		<div
 			className={clsx(
-				"transition-all absolute opacity-50 bg-blue-300",
+				"transition-all absolute opacity-50 bg-blue-300 z-10",
 				className()
 			)}
 		/>

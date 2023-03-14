@@ -77,12 +77,7 @@ export default () => {
 
 	return (
 		<div
-			style={{
-				display: "flex",
-				height: "100vh",
-				width: "100%",
-				overflowY: "auto",
-			}}
+			className="flex h-full w-full rounded-b overflow-y-auto"
 		>
 			<Uncontrolled
 				onChange={(editor, data, value) => {
