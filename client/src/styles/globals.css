@@ -12,8 +12,7 @@ body {
 		Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
 
-body:has(.command-list-open) {
-	height: 100vh;
+.text-editor:has(.command-list-open) {
 	overflow-y: hidden;
 	padding-right: 10px;
 	/* position: fixed; */

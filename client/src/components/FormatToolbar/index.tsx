@@ -57,9 +57,9 @@ export const FormatToolbar = () => {
 
     const rect = domRange.getBoundingClientRect();
     el.style.opacity = '1';
-    el.style.top = `${rect.top + window.pageYOffset - el.offsetHeight - 6}px`;
+    el.style.top = `${rect.top - 80}px`;
     el.style.left = `${
-      rect.left + window.pageXOffset - el.offsetWidth / 2 + rect.width / 2
+      rect.left + rect.width / 2 - 40
     }px`;
   });
 
@@ -77,7 +77,7 @@ export const FormatToolbar = () => {
     mounted ? (
       <div
         ref={ref}
-        className={clsx(show ? 'visible opacity-100':'invisible opacity-0',"absolute z-10 flex flex-row rounded bg-white shadow-3xl border border-gray-200 overflow-hidden transition-opacity")}
+        className={clsx(show ? 'visible opacity-100':'invisible opacity-0',"absolute translate-x-[-50%] z-10 flex flex-row rounded bg-white shadow-3xl border border-gray-200 overflow-hidden transition-opacity")}
         onMouseDown={(e) => e.preventDefault()}
       >
         {!!selectedType && <Select value={selectedType} items={FormatOptions} onValueChange={(type) => changeElementType(editor, type)}/>}

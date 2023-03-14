@@ -5,6 +5,7 @@ import { useSlate, ReactEditor } from 'slate-react';
 import clsx from 'clsx'
 import {ListsEditor} from '@prezly/slate-lists'
 
+import {ElementType} from '../../types'
 import {CommandOptions} from './CommandOptions';
 
 type CommandListProps = {
@@ -17,6 +18,19 @@ function Portal({ children }: PortalProps) {
   return typeof document === 'object'
     ? ReactDOM.createPortal(children, document.body)
     : null;
+}
+
+const headingOffset = (type:string) => {
+  switch(type) {
+    case ElementType.HEADING_ONE:
+      return -20
+    case ElementType.HEADING_TWO:
+      return 2
+    case ElementType.HEADING_THREE:
+      return 8
+    default:
+      return 15
+  }
 }
 export const CommandList = ({target, close}:CommandListProps) => {
   const [mounted, setMounted] = useState(false)
@@ -52,10 +66,12 @@ export const CommandList = ({target, close}:CommandListProps) => {
     if (target) {
       const el = ref.current
       if (el) {
+        const { selection } = editor;
+        const selectionType = editor.children[selection.anchor.path[0]].type
         const domRange = ReactEditor.toDOMRange(editor, target)
         const rect = domRange.getBoundingClientRect()
-        el.style.top = `${rect.top + window.pageYOffset + 24}px`
-        el.style.left = `${rect.left + window.pageXOffset}px`
+        el.style.top = `${rect.top + window.pageYOffset - headingOffset(selectionType)}px`
+        el.style.left = `${rect.left + window.pageXOffset - 35}px`
       }
     }
   }, [editor, target, command, commands.length])

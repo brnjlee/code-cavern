@@ -4,7 +4,7 @@ import { HocuspocusProvider } from "@hocuspocus/provider";
 import { withCursors, withYHistory, withYjs, YjsEditor } from "@slate-yjs/core";
 import React, { useCallback, useEffect, useState, ReactNode } from "react";
 import ReactDOM from "react-dom";
-import { Editor, Range, createEditor, Descendant, Text } from "slate";
+import { Range, createEditor, Descendant, Text, Transforms} from "slate";
 import {
 	getRemoteCaretsOnLeaf,
 	getRemoteCursorsOnLeaf,
@@ -113,6 +113,7 @@ export default () => {
 		);
 		provider.connect();
 		return () => {
+			Transforms.deselect(editor)
 			if (provider) {
 				provider.disconnect();
 			}
@@ -201,7 +202,7 @@ export default () => {
 	}, [editor]);
 
 	return (
-		<div className="flex h-full justify-center overflow-y-auto">
+		<div className="text-editor flex h-full justify-center overflow-y-auto">
 			{editor && (
 				<>
 					<Slate value={value} onChange={onChangeHandler} editor={editor}>
