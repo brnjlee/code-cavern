@@ -1,7 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
-  '@dnd-kit/core': ^6.0.8
+  '@dnd-kit/core': 6.0.8-next-202311924325
   '@dnd-kit/modifiers': ^6.0.1
   '@dnd-kit/sortable': ^7.0.2
   '@dnd-kit/utilities': ^3.2.1
@@ -52,9 +52,9 @@ specifiers:
   yjs: ^13.5.48
 
 dependencies:
-  '@dnd-kit/core': 6.0.8_biqbaboplfbrettd7655fr4n2y
-  '@dnd-kit/modifiers': 6.0.1_52scne4zmdeyjh2otzkgz2xfvu
-  '@dnd-kit/sortable': 7.0.2_52scne4zmdeyjh2otzkgz2xfvu
+  '@dnd-kit/core': 6.0.8-next-202311924325_biqbaboplfbrettd7655fr4n2y
+  '@dnd-kit/modifiers': 6.0.1_5ftcuzehf7m5vqpdtqh5ijihzu
+  '@dnd-kit/sortable': 7.0.2_5ftcuzehf7m5vqpdtqh5ijihzu
   '@dnd-kit/utilities': 3.2.1_react@18.2.0
   '@faker-js/faker': 7.6.0
   '@fortawesome/fontawesome-svg-core': 6.3.0
@@ -122,8 +122,8 @@ packages:
       tslib: 2.5.0
     dev: false
 
-  /@dnd-kit/core/6.0.8_biqbaboplfbrettd7655fr4n2y:
-    resolution: {integrity: sha512-lYaoP8yHTQSLlZe6Rr9qogouGUz9oRUj4AHhDQGQzq/hqaJRpFo65X+JKsdHf8oUFBzx5A+SJPUvxAwTF2OabA==}
+  /@dnd-kit/core/6.0.8-next-202311924325_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-ceMnqDwqUaqj9MlFgmE/LhXnwHuMX/7EjDiI1CcOyuhNPDo8P80h9BwS4I7zzu+qmWbIZKPDAlfPD+TPZbnNHw==}
     peerDependencies:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
@@ -135,25 +135,25 @@ packages:
       tslib: 2.5.0
     dev: false
 
-  /@dnd-kit/modifiers/6.0.1_52scne4zmdeyjh2otzkgz2xfvu:
+  /@dnd-kit/modifiers/6.0.1_5ftcuzehf7m5vqpdtqh5ijihzu:
     resolution: {integrity: sha512-rbxcsg3HhzlcMHVHWDuh9LCjpOVAgqbV78wLGI8tziXY3+qcMQ61qVXIvNKQFuhj75dSfD+o+PYZQ/NUk2A23A==}
     peerDependencies:
       '@dnd-kit/core': ^6.0.6
       react: '>=16.8.0'
     dependencies:
-      '@dnd-kit/core': 6.0.8_biqbaboplfbrettd7655fr4n2y
+      '@dnd-kit/core': 6.0.8-next-202311924325_biqbaboplfbrettd7655fr4n2y
       '@dnd-kit/utilities': 3.2.1_react@18.2.0
       react: 18.2.0
       tslib: 2.5.0
     dev: false
 
-  /@dnd-kit/sortable/7.0.2_52scne4zmdeyjh2otzkgz2xfvu:
+  /@dnd-kit/sortable/7.0.2_5ftcuzehf7m5vqpdtqh5ijihzu:
     resolution: {integrity: sha512-wDkBHHf9iCi1veM834Gbk1429bd4lHX4RpAwT0y2cHLf246GAvU2sVw/oxWNpPKQNQRQaeGXhAVgrOl1IT+iyA==}
     peerDependencies:
       '@dnd-kit/core': ^6.0.7
       react: '>=16.8.0'
     dependencies:
-      '@dnd-kit/core': 6.0.8_biqbaboplfbrettd7655fr4n2y
+      '@dnd-kit/core': 6.0.8-next-202311924325_biqbaboplfbrettd7655fr4n2y
       '@dnd-kit/utilities': 3.2.1_react@18.2.0
       react: 18.2.0
       tslib: 2.5.0
