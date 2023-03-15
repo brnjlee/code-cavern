@@ -8,7 +8,7 @@ import dynamic from "next/dynamic";
 
 import { ConnectionToggle } from "../../components/ConnectionToggle";
 import setMode from "./languageMapper";
-import { randomCursorData } from "@/utils/editor";
+import { randomCursorData } from "@/utils/utils";
 
 let yCodemirror: any = null;
 if (typeof window !== "undefined" && typeof window.navigator !== "undefined") {

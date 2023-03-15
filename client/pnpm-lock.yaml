@@ -45,6 +45,7 @@ specifiers:
   slate-react: ^0.91.8
   tailwindcss: ^3.2.7
   typescript: 4.9.5
+  uuidv4: ^6.2.13
   webpack: ^5.76.0
   y-codemirror: ^3.0.1
   y-protocols: ^1.0.5
@@ -92,6 +93,7 @@ dependencies:
   slate-history: 0.86.0_slate@0.91.4
   slate-react: 0.91.8_6tgy34rvmll7duwkm4ydcekf3u
   typescript: 4.9.5
+  uuidv4: 6.2.13
   y-codemirror: 3.0.1_edimu5qnhb5rrriywjr7oy256y
   y-protocols: 1.0.5
   y-webrtc: 10.2.4
@@ -1077,6 +1079,10 @@ packages:
 
   /@types/scheduler/0.16.2:
     resolution: {integrity: sha512-hppQEBDmlwhFAXKJX2KnWLYu5yMfi91yazPb2l+lbJiwW+wdo1gNeRA+3RgNSO39WYX2euey41KEwnqesU2Jew==}
+    dev: false
+
+  /@types/uuid/8.3.4:
+    resolution: {integrity: sha512-c/I8ZRb51j+pYGAu5CrFMRxqZ2ke4y2grEBO5AUjgSkSk+qT2Ea+OdWElz/OiMf5MNpn2b17kuVBwZLQJXzihw==}
     dev: false
 
   /@typescript-eslint/parser/5.54.0_ycpbpc6yetojsgtrx3mwntkhsu:
@@ -3979,6 +3985,13 @@ packages:
   /uuid/8.3.2:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
     hasBin: true
+    dev: false
+
+  /uuidv4/6.2.13:
+    resolution: {integrity: sha512-AXyzMjazYB3ovL3q051VLH06Ixj//Knx7QnUSi1T//Ie3io6CpsPu9nVMOx5MoLWh6xV0B9J0hIaxungxXUbPQ==}
+    dependencies:
+      '@types/uuid': 8.3.4
+      uuid: 8.3.2
     dev: false
 
   /watchpack/2.4.0:

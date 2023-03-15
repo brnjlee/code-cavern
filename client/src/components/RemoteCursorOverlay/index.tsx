@@ -6,7 +6,7 @@ import {
 import clsx from "clsx";
 import React, { CSSProperties, PropsWithChildren, useRef } from "react";
 import { CursorData } from "../../types";
-import { addAlpha } from "../../utils/editor";
+import { addAlpha } from "../../utils/utils";
 
 type CaretProps = Pick<CursorOverlayData<CursorData>, "caretPosition" | "data">;
 

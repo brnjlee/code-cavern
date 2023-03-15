@@ -32,6 +32,9 @@ type Tab = {
 	name: string;
 	id: UniqueIdentifier
 }
+type TabContainer = {
+	createContainer: (targetArea:string) => void
+}
 
 const conatinerIds = new Set<UniqueIdentifier>(["left", "top", "right", "bottom"]);
 
@@ -41,7 +44,7 @@ const containers = [
 	["right", "row-span-2"],
 	["bottom", "col-span-3"],
 ];
-const TabContainer = () => {
+const TabContainer = ({createContainer}: TabContainer) => {
 	const [activeTabId, setActiveTabId] = useState('500');
 	const [activeName, setActiveName] = useState(null);
 	const [hoveringOver, setHoveringOver] = useState<UniqueIdentifier>("");
@@ -150,6 +153,7 @@ const TabContainer = () => {
 		if (over) {
 			if (conatinerIds.has(over.id)) {
 				console.log("move to ", over.id);
+				createContainer(over.id)
 			} else if (active.id !== over.id) {
 				setTabs((tabs) => {
 					const oldIndex = tabs.map(e => e.id).indexOf(active.id);

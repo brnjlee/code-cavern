@@ -23,7 +23,7 @@ import { Leaf } from "../Leaf";
 import { ConnectionToggle } from "../ConnectionToggle";
 import { RemoteCursorOverlay } from "../RemoteCursorOverlay";
 import { CommandList } from "../CommandList";
-import { addAlpha, randomCursorData } from "../../utils/editor";
+import { addAlpha, randomCursorData } from "../../utils/utils";
 import { CursorData } from "../../types";
 import * as Y from "yjs";
 
