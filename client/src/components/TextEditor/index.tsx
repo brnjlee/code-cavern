@@ -111,12 +111,13 @@ export default () => {
 				)
 			)
 		);
-		provider.connect();
+		// provider.connect();
 		return () => {
 			Transforms.deselect(editor)
-			if (provider) {
-				provider.disconnect();
-			}
+			// if (provider) {
+			// 	console.log('unload')
+			// 	provider.disconnect();
+			// }
 		};
 	}, []);
 
@@ -156,12 +157,10 @@ export default () => {
 	const openCommandList = () => {
 		const { selection } = editor;
 		setTarget(selection);
-		console.log("open");
 		document.addEventListener("click", closeCommandList);
 	};
 	const closeCommandList = () => {
 		setTarget(null);
-		console.log("close");
 		document.removeEventListener("click", closeCommandList);
 	};
 
@@ -188,14 +187,14 @@ export default () => {
 		provider.connect();
 	}, [provider, connected]);
 
-	// useEffect(() => {
-	//   provider.connect();
-	//   console.log('connect')
-	//   return () => {
-	//     console.log('disconnect')
-	//     provider.disconnect()
-	//   };
-	// }, [provider]);
+	useEffect(() => {
+	  provider.connect();
+	  console.log('connect')
+	  return () => {
+	    console.log('disconnect')
+	    provider.disconnect()
+	  };
+	}, [provider]);
 	useEffect(() => {
 		YjsEditor.connect(editor);
 		return () => YjsEditor.disconnect(editor);
