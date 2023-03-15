@@ -1,6 +1,13 @@
 import { CursorEditor, YHistoryEditor, YjsEditor } from "@slate-yjs/core";
 import { Descendant,BaseElement } from "slate";
 import { ReactEditor } from "slate-react";
+import {UniqueIdentifier} from "@dnd-kit/core";
+
+export type Tab = {
+	type: string;
+	name: string;
+	id: UniqueIdentifier
+}
 
 export type CursorData = {
   name: string;
