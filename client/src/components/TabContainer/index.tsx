@@ -33,16 +33,21 @@ type TabContainer = {
   tabs: Tab[];
   containerId: string;
   hoveringOver: UniqueIdentifier;
+  closeTab: (tabIdx: number) => void;
 };
 
-const TabContainer = ({ tabs, containerId, hoveringOver }: TabContainer) => {
+const TabContainer = ({
+  tabs,
+  containerId,
+  hoveringOver,
+  closeTab,
+}: TabContainer) => {
   const [activeTabId, setActiveTabId] = useState(tabs[0].id);
   const [activeName, setActiveName] = useState(null);
 
   useEffect(() => {
     if (!tabs.map((e) => e.id).includes(activeTabId)) {
-      console.log(activeTabId, tabs);
-      // setActiveTabId(tabs[0].id);
+      setActiveTabId(tabs[0].id);
     }
   }, [tabs]);
 
@@ -60,7 +65,7 @@ const TabContainer = ({ tabs, containerId, hoveringOver }: TabContainer) => {
     [activeTabId, tabs]
   );
 
-  const renderTabs = tabs.map(({ type, name, id }) => (
+  const renderTabs = tabs.map(({ type, name, id }, tabIdx) => (
     <SortableTab
       key={id}
       id={id}
@@ -78,8 +83,9 @@ const TabContainer = ({ tabs, containerId, hoveringOver }: TabContainer) => {
           "h-5 w-5 ml-1 flex justify-center hover:bg-gray-100 rounded-full p-[3px]"
         )}
         type="button"
-        onMouseDown={(event) => {
-          event.preventDefault();
+        onClick={(event) => {
+          event.stopPropagation();
+          closeTab(tabIdx);
         }}
       >
         <Cross2Icon className={"text-black"} />

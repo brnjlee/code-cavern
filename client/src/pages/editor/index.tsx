@@ -109,6 +109,20 @@ export default () => {
     ],
   });
 
+  const handleCloseTab = (tabIdx: number, containerId: string) => {
+    const closeTab = (root: Panel) => {
+      if (root.type === "panel" && root.id === containerId) {
+        root.tabs?.splice(tabIdx, 1);
+        return;
+      } else if (root.panels) {
+        root.panels.forEach((child) => closeTab(child));
+      }
+    };
+    let layoutClone = JSON.parse(JSON.stringify(layout));
+    closeTab(layoutClone);
+    setLayout(layoutClone);
+  };
+
   const renderLayout = (root: Panel) => {
     if (root.type === "panel") {
       return (
@@ -120,6 +134,7 @@ export default () => {
             hoveringOver={
               hoveringOver.containerId === root.id ? hoveringOver.hover : ""
             }
+            closeTab={(tabIdx) => handleCloseTab(tabIdx, root.id)}
           />
         </Panel>
       );

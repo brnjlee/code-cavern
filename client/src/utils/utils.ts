@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
 import randomColor from "randomcolor";
-import { uuid } from 'uuidv4';
+import { v4 as uuidv4 } from "uuid";
 
 import { CursorData } from "../types";
 
@@ -25,5 +25,5 @@ export function addAlpha(hexColor: string, opacity: number): string {
 }
 
 export function genUniqueId() {
-  return uuid().slice(0,8)
+  return uuidv4().slice(0, 8);
 }
