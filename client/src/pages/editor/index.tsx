@@ -155,18 +155,24 @@ export default () => {
 
   const handleCreateContainer = (
     originId: string,
+    targetId: string,
     targetArea: UniqueIdentifier,
     tab: Tab
   ) => {
+    let panelAdded = false;
     const mutateClone = (root: Panel) => {
       if (root.panels) {
-        const idx = indexOfPanel(root.panels, originId);
-        if (idx != -1) {
-          let newPanel: Panel;
-          const tabIdx = root.panels[idx].tabs
+        const targetIdx = indexOfPanel(root.panels, targetId);
+        const sourceIdx = indexOfPanel(root.panels, originId);
+        if (sourceIdx != -1) {
+          const tabIdx = root.panels[sourceIdx].tabs
             ?.map((e) => e.id)
             .indexOf(tab.id);
-          root.panels[idx].tabs?.splice(tabIdx, 1);
+          root.panels[sourceIdx].tabs?.splice(tabIdx, 1);
+        }
+        if (targetIdx != -1 && !panelAdded) {
+          panelAdded = true;
+          let newPanel: Panel;
           if (
             directionTable[targetArea as keyof DirectionTable] === root.type
           ) {
@@ -176,31 +182,30 @@ export default () => {
               tabs: [tab],
             };
             if (targetArea === "right" || targetArea === "bottom") {
-              root.panels.splice(idx + 1, 0, newPanel);
-              return;
+              root.panels.splice(targetIdx + 1, 0, newPanel);
+            } else {
+              root.panels.splice(targetIdx, 0, newPanel);
             }
-            root.panels.splice(idx, 0, newPanel);
-            return;
-          }
-          newPanel = {
-            type: directionTable[targetArea as keyof DirectionTable],
-            panels: [
-              {
-                type: "panel",
-                id: genUniqueId(),
-                tabs: [tab],
-              },
-            ],
-          };
-          // console.info(root.panels[idx]);
-          if (targetArea === "right" || targetArea === "bottom") {
-            newPanel.panels.unshift(root.panels[idx]);
           } else {
-            newPanel.panels.push(root.panels[idx]);
+            newPanel = {
+              type: directionTable[targetArea as keyof DirectionTable],
+              panels: [
+                {
+                  type: "panel",
+                  id: genUniqueId(),
+                  tabs: [tab],
+                },
+              ],
+            };
+            if (targetArea === "right" || targetArea === "bottom") {
+              newPanel.panels.unshift(root.panels[targetIdx]);
+            } else {
+              newPanel.panels.push(root.panels[targetIdx]);
+            }
+            root.panels.splice(targetIdx, 1, newPanel);
           }
-          root.panels.splice(idx, 1, newPanel);
-          return;
         }
+
         root.panels.forEach((child) => mutateClone(child));
       }
     };
@@ -242,7 +247,6 @@ export default () => {
         hover: "",
       });
     }
-    console.log(hoveringOver);
   };
   const handleDragStart = (event: DragOverEvent) => {
     const { active } = event;
@@ -268,13 +272,13 @@ export default () => {
     if (over && draggedTab) {
       if (targetAreas.has(hoveringOver.hover)) {
         handleCreateContainer(
-          active.data.current?.parent,
+          active.data.current.parent,
+          hoveringOver.containerId,
           hoveringOver.hover,
           draggedTab
         );
       } else if (active.id !== over.id) {
         // ADD LOGIC WHEN PARENTS ARE NOT EQUAL
-        console.log("swap");
         let layoutClone = JSON.parse(JSON.stringify(layout));
         mutateTabs(layoutClone);
         setLayout(layoutClone);

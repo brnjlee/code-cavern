@@ -215,7 +215,13 @@ export default () => {
       {editor && (
         <>
           <Slate value={value} onChange={onChangeHandler} editor={editor}>
-            {target && <CommandList target={target} close={closeCommandList} />}
+            {target && (
+              <CommandList
+                target={target}
+                close={closeCommandList}
+                containerRef={containerRef}
+              />
+            )}
             <FormatToolbar containerRef={containerRef} />
             <DecoratedEditable />
             {/* </RemoteCursorOverlay> */}

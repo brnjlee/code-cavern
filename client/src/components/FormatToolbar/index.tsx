@@ -24,7 +24,7 @@ function Portal({ children }: PortalProps) {
 export const FormatToolbar = ({
   containerRef,
 }: {
-  containerRef: HTMLDivElement;
+  containerRef: React.RefObject<HTMLDivElement>;
 }) => {
   const [mounted, setMounted] = useState(false);
   const [show, setShow] = useState(false);
@@ -65,7 +65,10 @@ export const FormatToolbar = ({
 
     const domRange = domSelection.getRangeAt(0);
     const rect = domRange.getBoundingClientRect();
-    const containerRect = containerRef.current.getBoundingClientRect();
+    const containerRect = containerRef.current?.getBoundingClientRect() ?? {
+      top: 0,
+      left: 0,
+    };
     el.style.opacity = "1";
     el.style.top = `${rect.top - containerRect.top - 5}px`;
     el.style.left = `${rect.left - containerRect.left + rect.width / 2}px`;
