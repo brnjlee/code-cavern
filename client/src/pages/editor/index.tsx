@@ -160,15 +160,14 @@ export default () => {
     tab: Tab
   ) => {
     let panelAdded = false;
-    const mutateClone = (root: Panel) => {
+    const mutateLayout = (root: Panel) => {
       if (root.panels) {
         const targetIdx = indexOfPanel(root.panels, targetId);
         const sourceIdx = indexOfPanel(root.panels, originId);
         if (sourceIdx != -1) {
-          const tabIdx = root.panels[sourceIdx].tabs
-            ?.map((e) => e.id)
-            .indexOf(tab.id);
-          root.panels[sourceIdx].tabs?.splice(tabIdx, 1);
+          root.panels[sourceIdx].tabs = root.panels[sourceIdx].tabs?.filter(
+            (e) => e.id !== tab.id
+          );
         }
         if (targetIdx != -1 && !panelAdded) {
           panelAdded = true;
@@ -206,11 +205,11 @@ export default () => {
           }
         }
 
-        root.panels.forEach((child) => mutateClone(child));
+        root.panels.forEach((child) => mutateLayout(child));
       }
     };
     let layoutClone = JSON.parse(JSON.stringify(layout));
-    mutateClone(layoutClone);
+    mutateLayout(layoutClone);
     setLayout(layoutClone);
   };
 
@@ -235,18 +234,55 @@ export default () => {
 
   const handleDragOver = (event: DragOverEvent) => {
     const { active, over } = event;
-    const targetArea = over?.id.split("-").pop();
-    if (over && targetAreas.has(targetArea)) {
-      setHoveringOver({
-        containerId: over.data.current.parent,
-        hover: targetArea,
-      });
+    const transferTab = (root) => {
+      if (root.type === "panel") {
+        if (root.id === active.data.current?.parent) {
+          root.tabs = root.tabs?.filter((e) => e.id !== active.id);
+        } else if (root.id === over?.data.current?.parent) {
+          const isBelowOverItem =
+            over &&
+            active.rect.current.translated &&
+            active.rect.current.translated.top >
+              over.rect.top + over.rect.height;
+
+          const modifier = isBelowOverItem ? 1 : 0;
+          const overIdx = root.tabs.map((e) => e.id).indexOf(over?.id);
+          const newIdx =
+            overIdx >= 0 ? overIdx + modifier : root.tabs.length + 1;
+          root.tabs = [
+            ...root.tabs.slice(0, newIdx),
+            {
+              id: active.id,
+              type: active.data.current?.type,
+              name: active.data.current?.name,
+            },
+            ...root.tabs.slice(newIdx, root.tabs.length),
+          ];
+        }
+      } else if (root.panels) {
+        root.panels.forEach((child) => transferTab(child));
+      }
+    };
+    if (!over || !active) return;
+    const isSortable = over?.data.current?.name;
+    if (isSortable) {
+      if (active.data.current?.parent !== over.data.current?.parent) {
+        transferTab(layout);
+      }
     } else {
-      setHoveringOver({
-        containerId: "",
-        hover: "",
-      });
+      const targetArea = over?.id.split("-").pop();
+      if (targetAreas.has(targetArea)) {
+        setHoveringOver({
+          containerId: over.data.current.parent,
+          hover: targetArea,
+        });
+        return;
+      }
     }
+    setHoveringOver({
+      containerId: "",
+      hover: "",
+    });
   };
   const handleDragStart = (event: DragOverEvent) => {
     const { active } = event;
