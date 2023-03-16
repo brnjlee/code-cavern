@@ -210,7 +210,7 @@ export default () => {
   return (
     <div
       ref={containerRef}
-      className="text-editor flex h-full justify-center overflow-y-auto"
+      className="text-editor px-5 flex h-full justify-center overflow-y-auto"
     >
       {editor && (
         <>

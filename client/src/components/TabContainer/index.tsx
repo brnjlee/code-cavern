@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
   DndContext,
   KeyboardSensor,
@@ -37,6 +37,12 @@ type TabContainer = {
 const TabContainer = ({ tabs, containerId, hoveringOver }: TabContainer) => {
   const [activeTabId, setActiveTabId] = useState(tabs[0].id);
   const [activeName, setActiveName] = useState(null);
+
+  useEffect(() => {
+    if (!tabs.map((e) => e.id).includes(activeTabId)) {
+      setActiveTabId(tabs[0].id);
+    }
+  }, [tabs]);
 
   const hoverContainers = [
     [containerId + "-left", "row-span-2"],
