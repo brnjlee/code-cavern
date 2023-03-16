@@ -39,6 +39,7 @@ specifiers:
   react: 18.2.0
   react-codemirror2: ^7.2.1
   react-dom: 18.2.0
+  react-icons: ^4.8.0
   react-resizable-panels: ^0.0.36
   slate: ^0.91.4
   slate-history: ^0.86.0
@@ -88,6 +89,7 @@ dependencies:
   react: 18.2.0
   react-codemirror2: 7.2.1_6rbpxrfnogqidakyklns6o2334
   react-dom: 18.2.0_react@18.2.0
+  react-icons: 4.8.0_react@18.2.0
   react-resizable-panels: 0.0.36_biqbaboplfbrettd7655fr4n2y
   slate: 0.91.4
   slate-history: 0.86.0_slate@0.91.4
@@ -3347,6 +3349,14 @@ packages:
       loose-envify: 1.4.0
       react: 18.2.0
       scheduler: 0.23.0
+    dev: false
+
+  /react-icons/4.8.0_react@18.2.0:
+    resolution: {integrity: sha512-N6+kOLcihDiAnj5Czu637waJqSnwlMNROzVZMhfX68V/9bu9qHaMIJC4UdozWoOk57gahFCNHwVvWzm0MTzRjg==}
+    peerDependencies:
+      react: '*'
+    dependencies:
+      react: 18.2.0
     dev: false
 
   /react-is/16.13.1:

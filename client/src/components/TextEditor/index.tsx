@@ -210,10 +210,10 @@ export default () => {
   return (
     <div
       ref={containerRef}
-      className="text-editor px-5 flex h-full justify-center overflow-y-auto"
+      className="text-editor bg-white rounded-b flex h-full justify-center overflow-y-auto"
     >
       {editor && (
-        <>
+        <div className="px-5">
           <Slate value={value} onChange={onChangeHandler} editor={editor}>
             {target && (
               <CommandList
@@ -227,7 +227,7 @@ export default () => {
             {/* </RemoteCursorOverlay> */}
           </Slate>
           <ConnectionToggle connected={connected} onClick={toggleConnection} />
-        </>
+        </div>
       )}
     </div>
   );

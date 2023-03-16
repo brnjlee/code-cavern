@@ -17,11 +17,12 @@ import {
   horizontalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { Cross2Icon } from "@radix-ui/react-icons";
+import { FaPython } from "react-icons/fa";
+import { MdTextSnippet } from "react-icons/md";
 import clsx from "clsx";
 
-import Draggable from "../Draggable";
 import Droppable from "../Droppable";
-import SortableItem from "../SortableItem";
+import SortableTab from "../SortableTab";
 
 import HoverOverlay from "./HoverOverlay";
 import CodeEditor from "../CodeEditor";
@@ -40,7 +41,8 @@ const TabContainer = ({ tabs, containerId, hoveringOver }: TabContainer) => {
 
   useEffect(() => {
     if (!tabs.map((e) => e.id).includes(activeTabId)) {
-      setActiveTabId(tabs[0].id);
+      console.log(activeTabId, tabs);
+      // setActiveTabId(tabs[0].id);
     }
   }, [tabs]);
 
@@ -59,7 +61,7 @@ const TabContainer = ({ tabs, containerId, hoveringOver }: TabContainer) => {
   );
 
   const renderTabs = tabs.map(({ type, name, id }) => (
-    <SortableItem
+    <SortableTab
       key={id}
       id={id}
       name={name}
@@ -67,14 +69,13 @@ const TabContainer = ({ tabs, containerId, hoveringOver }: TabContainer) => {
       parent={containerId}
       onClick={() => setActiveTabId(id)}
       className={clsx(
-        activeTabId === id && "bg-gray-400",
-        "select-none bg-gray-200 pl-2 pr-1 py-1 ml-1.5 text-sm rounded flex items-center"
+        activeTabId === id && "bg-slate-200 pl-4 pr-3",
+        "text-sm bg-gray-100 hover:bg-gray-200 pl-2 pr-1 py-1 ml-1.5"
       )}
     >
-      <span>{name}</span>
       <button
         className={clsx(
-          "h-5 w-5 ml-1 flex justify-center items-center hover:bg-gray-100 rounded-full p-[3px]"
+          "h-5 w-5 ml-1 flex justify-center hover:bg-gray-100 rounded-full p-[3px]"
         )}
         type="button"
         onMouseDown={(event) => {
@@ -83,7 +84,7 @@ const TabContainer = ({ tabs, containerId, hoveringOver }: TabContainer) => {
       >
         <Cross2Icon className={"text-black"} />
       </button>
-    </SortableItem>
+    </SortableTab>
   ));
 
   const renderHoverContainers = hoverContainers.map(([id, className]) => (
@@ -107,9 +108,9 @@ const TabContainer = ({ tabs, containerId, hoveringOver }: TabContainer) => {
   };
 
   return (
-    <div className="relative h-full bg-gray-200 rounded flex flex-col">
+    <div className="relative h-full shadow rounded flex flex-col">
       <SortableContext items={tabs} strategy={horizontalListSortingStrategy}>
-        <div className="bg-black h-10 flex items-center rounded-t">
+        <div className="bg-white h-10 flex items-center rounded-t">
           {renderTabs}
         </div>
       </SortableContext>

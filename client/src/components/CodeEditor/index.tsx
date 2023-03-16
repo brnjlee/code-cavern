@@ -12,100 +12,98 @@ import { randomCursorData } from "@/utils/utils";
 
 let yCodemirror: any = null;
 if (typeof window !== "undefined" && typeof window.navigator !== "undefined") {
-	yCodemirror = require("y-codemirror");
-	require("../../utils/codemirror");
+  yCodemirror = require("y-codemirror");
+  require("../../utils/codemirror");
 }
 const Uncontrolled = dynamic(
-	() => import("react-codemirror2").then((m) => m.UnControlled),
-	{
-		ssr: false,
-	}
+  () => import("react-codemirror2").then((m) => m.UnControlled),
+  {
+    ssr: false,
+  }
 );
 
 let provider: any = null;
 export default () => {
-	const [EditorRef, setEditorRef] = useState(null);
-	const [code, setCode] = useState("");
-	const [connected, setConnected] = useState(false);
-	const [lang, setLang] = useState("javascript");
+  const [EditorRef, setEditorRef] = useState(null);
+  const [code, setCode] = useState("");
+  const [connected, setConnected] = useState(false);
+  const [lang, setLang] = useState("javascript");
 
-	const handleEditorDidMount = (editor) => {
-		setEditorRef(editor);
-	};
-	useEffect(() => {
-		if (EditorRef) {
-			const ydoc = new Y.Doc();
-			provider = new WebsocketProvider(
-				"ws://localhost:1234/collaboration/6",
-				"hocuspocus-demos-codemirror",
-				ydoc
-			);
-			const yText = ydoc.getText("codemirror");
-			const yUndoManager = new Y.UndoManager(yText);
-			const awareness = provider.awareness;
-			const color = RandomColor();
+  const handleEditorDidMount = (editor) => {
+    setEditorRef(editor);
+  };
+  useEffect(() => {
+    if (EditorRef) {
+      const ydoc = new Y.Doc();
+      provider = new WebsocketProvider(
+        "ws://localhost:1234/collaboration/6",
+        "hocuspocus-demos-codemirror",
+        ydoc
+      );
+      const yText = ydoc.getText("codemirror");
+      const yUndoManager = new Y.UndoManager(yText);
+      const awareness = provider.awareness;
+      const color = RandomColor();
 
-			awareness.setLocalStateField("user", randomCursorData());
-			const getBinding = new yCodemirror.CodemirrorBinding(
-				yText,
-				EditorRef,
-				awareness,
-				{
-					yUndoManager,
-				}
-			);
+      awareness.setLocalStateField("user", randomCursorData());
+      const getBinding = new yCodemirror.CodemirrorBinding(
+        yText,
+        EditorRef,
+        awareness,
+        {
+          yUndoManager,
+        }
+      );
 
-			provider.connect();
-			setConnected(true);
-			return () => {
-				if (provider) {
-					setConnected(false);
-					provider.disconnect();
-					ydoc.destroy();
-				}
-			};
-		}
-	}, [EditorRef]);
-	const toggleConnection = useCallback(() => {
-		if (connected) {
-			setConnected(false);
-			return provider.disconnect();
-		}
-		setConnected(true);
-		provider.connect();
-	}, [provider, connected]);
+      provider.connect();
+      setConnected(true);
+      return () => {
+        if (provider) {
+          setConnected(false);
+          provider.disconnect();
+          ydoc.destroy();
+        }
+      };
+    }
+  }, [EditorRef]);
+  const toggleConnection = useCallback(() => {
+    if (connected) {
+      setConnected(false);
+      return provider.disconnect();
+    }
+    setConnected(true);
+    provider.connect();
+  }, [provider, connected]);
 
-	return (
-		<div
-			className="flex h-full w-full rounded-b overflow-y-auto"
-		>
-			<Uncontrolled
-				onChange={(editor, data, value) => {
-					setCode(value);
-				}}
-				autoScroll
-				options={{
-					mode: setMode(lang),
-					theme: "ayu-mirage",
-					lineWrapping: true,
-					smartIndent: true,
-					lineNumbers: true,
-					foldGutter: true,
-					tabSize: 2,
-					gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
-					autoCloseTags: true,
-					matchBrackets: true,
-					autoCloseBrackets: true,
-					extraKeys: {
-						"Ctrl-Space": "autocomplete",
-					},
-				}}
-				editorDidMount={(editor) => {
-					handleEditorDidMount(editor);
-					editor.setSize("100vw", "100%");
-				}}
-			/>
-			<ConnectionToggle connected={connected} onClick={toggleConnection} />
-		</div>
-	);
+  return (
+    <div className="flex h-full w-full rounded-b overflow-y-auto text-base">
+      <Uncontrolled
+        onChange={(editor, data, value) => {
+          setCode(value);
+        }}
+        autoScroll
+        options={{
+          mode: setMode(lang),
+          theme: true ? "eclipse" : "ayu-mirage",
+          lineWrapping: true,
+          smartIndent: true,
+          lineNumbers: true,
+          foldGutter: true,
+          tabSize: 2,
+          gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+          autoCloseTags: true,
+          matchBrackets: true,
+          autoCloseBrackets: true,
+          extraKeys: {
+            "Ctrl-Space": "autocomplete",
+          },
+        }}
+        editorDidMount={(editor) => {
+          handleEditorDidMount(editor);
+          editor.setSize("100vw", "100%");
+        }}
+      />
+      <ConnectionToggle connected={connected} onClick={toggleConnection} />
+    </div>
+  );
 };

@@ -18,17 +18,20 @@ import {
   horizontalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { Cross2Icon } from "@radix-ui/react-icons";
+import { FaPython } from "react-icons/fa";
+import { MdTextSnippet } from "react-icons/md";
 import clsx from "clsx";
 
 import Item from "../../components/Item";
 import TabContainer from "../../components/TabContainer";
+import SidebarPanel from "../../components/SidebarPanel";
 import { genUniqueId } from "../../utils/utils";
 import { Tab } from "../../types";
 
 const DEFAULT_TABS = [
   {
     type: "code",
-    name: "test1.py",
+    name: "test9.py",
     id: "500",
   },
   {
@@ -48,7 +51,7 @@ const DEFAULT_TABS = [
   },
   {
     type: "text",
-    name: "test5.md",
+    name: "a.md",
     id: "1",
   },
   {
@@ -331,6 +334,11 @@ export default () => {
       id={draggedTab?.name ?? ""}
       className="bg-gray-200 px-2 py-1 text-sm rounded flex items-center"
     >
+      {draggedTab?.type === "text" ? (
+        <MdTextSnippet className="text-yellow-500 mr-1.5 text-base" />
+      ) : (
+        <FaPython className="text-cyan-500 mr-1.5 text-base" />
+      )}
       <span>{draggedTab?.name}</span>
       <button
         className={clsx(
@@ -343,7 +351,7 @@ export default () => {
   );
 
   return (
-    <div className="h-screen p-10">
+    <div className="h-screen bg-slate-200 p-10">
       <DndContext
         sensors={sensors}
         collisionDetection={rectIntersection}
@@ -351,7 +359,13 @@ export default () => {
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        {renderLayout(layout)}
+        <PanelGroup direction="horizontal">
+          <Panel defaultSize={15} maxSize={20}>
+            <SidebarPanel tabs={DEFAULT_TABS} />
+          </Panel>
+          <PanelResizeHandle className="w-2" />
+          <Panel>{renderLayout(layout)}</Panel>
+        </PanelGroup>
         <DragOverlay>{draggedTab ? renderItem : null}</DragOverlay>
       </DndContext>
     </div>
