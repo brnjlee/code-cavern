@@ -52,10 +52,26 @@ const TabContainer = ({
   }, [tabs]);
 
   const hoverContainers = [
-    [containerId + "-left", "row-span-2"],
-    [containerId + "-top", "col-span-3"],
-    [containerId + "-right", "row-span-2"],
-    [containerId + "-bottom", "col-span-3"],
+    {
+      containerId,
+      type: "left",
+      className: "row-span-2",
+    },
+    {
+      containerId,
+      type: "top",
+      className: "col-span-3",
+    },
+    {
+      containerId,
+      type: "right",
+      className: "row-span-2",
+    },
+    {
+      containerId,
+      type: "bottom",
+      className: "col-span-3",
+    },
   ];
   // const [hoveringOver, setHoveringOver] = useState<UniqueIdentifier>("");
   const activeTab = useCallback(
@@ -94,16 +110,19 @@ const TabContainer = ({
     </SortableTab>
   ));
 
-  const renderHoverContainers = hoverContainers.map(([id, className]) => (
-    <Droppable
-      key={id}
-      id={id}
-      parent={containerId}
-      className={clsx("h-full", className)}
-    >
-      {/* {parent === id ? draggableMarkup : "Drop here"} */}
-    </Droppable>
-  ));
+  const renderHoverContainers = hoverContainers.map(
+    ({ containerId, type, className }) => (
+      <Droppable
+        key={containerId + type}
+        id={containerId + type}
+        parent={containerId}
+        type={type}
+        className={clsx("h-full", className)}
+      >
+        {/* {parent === id ? draggableMarkup : "Drop here"} */}
+      </Droppable>
+    )
+  );
 
   const renderContent = () => {
     switch (activeTab(activeTabId)?.type) {

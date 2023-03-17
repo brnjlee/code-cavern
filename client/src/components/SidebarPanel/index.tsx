@@ -1,7 +1,5 @@
 import React from "react";
 import { Tab } from "../../types";
-import { FaPython } from "react-icons/fa";
-import { MdTextSnippet } from "react-icons/md";
 import SortableTab from "../SortableTab";
 type SidebarPanel = {
   tabs: Tab[];
@@ -12,7 +10,7 @@ const SidebarPanel = ({ tabs }: SidebarPanel) => {
     .map(({ type, name, id, itemId }) => (
       <SortableTab
         key={id}
-        id={id + "-sidebar"}
+        id={id}
         itemId={itemId}
         name={name}
         type={type}

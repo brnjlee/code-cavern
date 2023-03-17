@@ -13,23 +13,17 @@ type SortableTab = Tab & {
   children?: React.ReactNode;
 };
 const SortableTab = ({
-  id,
-  itemId,
   name,
   type,
-  parent,
   className,
-  onClick,
   children,
+  ...props
 }: SortableTab) => {
   return (
     <SortableItem
-      id={id}
-      itemId={itemId}
       name={name}
       type={type}
-      parent={parent}
-      onClick={onClick}
+      {...props}
       className={clsx(
         className,
         "select-none rounded flex items-center transition-all"

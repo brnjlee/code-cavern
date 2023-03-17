@@ -98,8 +98,13 @@ type HoveringOver = {
   containerId: string;
   hover: UniqueIdentifier;
 };
+
+type DraggedTab = Tab & {
+  originId: string;
+};
 export default () => {
-  const [draggedTab, setDraggedTab] = useState<Tab | null>(null);
+  const [draggedTab, setDraggedTab] = useState<DraggedTab | null>(null);
+  const [sidebarTabs, setSidebarTabs] = useState<Tab[]>(DEFAULT_TABS);
   const [hoveringOver, setHoveringOver] = useState<HoveringOver>({
     containerId: "",
     hover: "",
@@ -111,7 +116,14 @@ export default () => {
       {
         type: "panel",
         id: genUniqueId(),
-        tabs: DEFAULT_TABS,
+        tabs: [
+          {
+            type: "code",
+            name: "test9.py",
+            itemId: "500",
+            id: genUniqueId(),
+          },
+        ],
       },
     ],
   });
@@ -310,10 +322,10 @@ export default () => {
           root.tabs = [
             ...root.tabs.slice(0, newIdx),
             {
-              id: active.id,
-              itemId: active.data.current?.id,
-              type: active.data.current?.type,
-              name: active.data.current?.name,
+              id: draggedTab?.id,
+              itemId: draggedTab?.itemId,
+              type: draggedTab?.type,
+              name: draggedTab?.name,
             },
             ...root.tabs.slice(newIdx, root.tabs.length),
           ];
@@ -328,15 +340,12 @@ export default () => {
       if (active.data.current?.parent !== over.data.current?.parent) {
         transferTab(layout);
       }
-    } else {
-      const targetArea = over?.id.split("-").pop();
-      if (targetAreas.has(targetArea)) {
-        setHoveringOver({
-          containerId: over.data.current?.parent,
-          hover: targetArea,
-        });
-        return;
-      }
+    } else if (targetAreas.has(over.data.current?.type)) {
+      setHoveringOver({
+        containerId: over.data.current?.parent,
+        hover: over.data.current?.type,
+      });
+      return;
     }
     setHoveringOver({
       containerId: "",
@@ -350,6 +359,7 @@ export default () => {
       name: active.data.current?.name,
       type: active.data.current?.type,
       id: active.id,
+      originId: active.data.current?.parent,
     });
   };
 
@@ -370,12 +380,26 @@ export default () => {
       }
     };
     if (over && draggedTab) {
+      if (draggedTab.originId === "sidebar") {
+        const tabIdx = sidebarTabs.map((e) => e.id).indexOf(active.id);
+        console.info(sidebarTabs, active);
+        if (tabIdx !== -1) {
+          let sidebarTabsClone = [...sidebarTabs];
+          sidebarTabsClone[tabIdx].id = genUniqueId();
+          setSidebarTabs(sidebarTabsClone);
+        }
+      }
       if (targetAreas.has(hoveringOver.hover)) {
         handleCreateContainer(
           active.data.current?.parent,
           hoveringOver.containerId,
           hoveringOver.hover,
-          draggedTab
+          {
+            itemId: active.data.current?.id,
+            name: active.data.current?.name,
+            type: active.data.current?.type,
+            id: active.id,
+          }
         );
       } else if (active.id !== over.id) {
         // ADD LOGIC WHEN PARENTS ARE NOT EQUAL
@@ -422,7 +446,7 @@ export default () => {
       >
         <PanelGroup direction="horizontal">
           <Panel defaultSize={15} maxSize={20}>
-            <SidebarPanel tabs={DEFAULT_TABS} />
+            <SidebarPanel tabs={sidebarTabs} />
           </Panel>
           <PanelResizeHandle className="w-2" />
           <Panel>{renderLayout(layout)}</Panel>
