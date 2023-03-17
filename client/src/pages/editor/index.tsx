@@ -1,5 +1,10 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import { PanelGroup, Panel, PanelResizeHandle } from "react-resizable-panels";
+import {
+  PanelGroup,
+  Panel,
+  PanelResizeHandle,
+  Direction,
+} from "react-resizable-panels";
 import {
   DndContext,
   KeyboardSensor,
@@ -110,7 +115,7 @@ export default () => {
     hover: "",
   });
   const [layout, setLayout] = useState<Panel>({
-    type: "root",
+    type: "horizontal",
     id: genUniqueId(),
     panels: [
       {
@@ -182,22 +187,7 @@ export default () => {
         </Panel>
       );
     }
-    const resizeHandleClass =
-      root.type === "horizontal" || root.type === "root" ? "w-2" : "h-2";
-    if (root.type === "root") {
-      return (
-        <PanelGroup direction="horizontal">
-          {root.panels.map((child: Panel, i: number) => (
-            <>
-              {renderLayout(child)}
-              {i < root.panels.length - 1 ? (
-                <PanelResizeHandle className={resizeHandleClass} />
-              ) : null}
-            </>
-          ))}
-        </PanelGroup>
-      );
-    }
+    const resizeHandleClass = root.type === "horizontal" ? "w-2" : "h-2";
     return (
       <Panel>
         <PanelGroup direction={root.type}>
@@ -215,64 +205,69 @@ export default () => {
   };
 
   const handleCreateContainer = (
-    originId: string,
+    sourceId: string,
     targetId: string,
     targetArea: UniqueIdentifier,
     tab: Tab
   ) => {
-    let panelAdded = false;
-    const mutateLayout = (root: Panel) => {
-      if (root.panels) {
-        const targetIdx = indexOfPanel(root.panels, targetId);
-        const sourceIdx = indexOfPanel(root.panels, originId);
-        if (sourceIdx != -1) {
-          root.panels[sourceIdx].tabs = root.panels[sourceIdx].tabs?.filter(
-            (e) => e.itemId !== tab.itemId
-          );
+    let layoutClone = JSON.parse(JSON.stringify(layout));
+    let [targetRoot, targetIdx] = findWrapper(layoutClone, targetId);
+    let sourceRoot = findPanel(layoutClone, sourceId);
+
+    if (sourceRoot) {
+      sourceRoot.tabs = sourceRoot.tabs?.filter((e) => e.itemId !== tab.itemId);
+    }
+    if (targetRoot && targetRoot.panels) {
+      let newPanel: Panel;
+      if (
+        directionTable[targetArea as keyof DirectionTable] ===
+        (targetRoot.type === "root" ? "horizontal" : targetRoot.type)
+      ) {
+        newPanel = {
+          type: "panel",
+          id: genUniqueId(),
+          tabs: [tab],
+        };
+        if (targetArea === "right" || targetArea === "bottom") {
+          targetRoot.panels.splice(targetIdx + 1, 0, newPanel);
+        } else {
+          targetRoot.panels.splice(targetIdx, 0, newPanel);
         }
-        if (targetIdx != -1 && !panelAdded) {
-          panelAdded = true;
-          let newPanel: Panel;
-          if (
-            directionTable[targetArea as keyof DirectionTable] === root.type
-          ) {
-            newPanel = {
+      } else {
+        newPanel = {
+          type: directionTable[targetArea as keyof DirectionTable],
+          id: genUniqueId(),
+          panels: [
+            {
               type: "panel",
               id: genUniqueId(),
               tabs: [tab],
-            };
-            if (targetArea === "right" || targetArea === "bottom") {
-              root.panels.splice(targetIdx + 1, 0, newPanel);
-            } else {
-              root.panels.splice(targetIdx, 0, newPanel);
-            }
-          } else {
-            newPanel = {
-              type: directionTable[targetArea as keyof DirectionTable],
-              id: genUniqueId(),
-              panels: [
-                {
-                  type: "panel",
-                  id: genUniqueId(),
-                  tabs: [tab],
-                },
-              ],
-            };
-            if (targetArea === "right" || targetArea === "bottom") {
-              newPanel.panels.unshift(root.panels[targetIdx]);
-            } else {
-              newPanel.panels.push(root.panels[targetIdx]);
-            }
-            root.panels.splice(targetIdx, 1, newPanel);
-          }
+            },
+          ],
+        };
+        if (targetArea === "right" || targetArea === "bottom") {
+          newPanel.panels?.unshift(targetRoot.panels[targetIdx]);
+        } else {
+          newPanel.panels?.push(targetRoot.panels[targetIdx]);
         }
-
-        root.panels.forEach((child) => mutateLayout(child));
+        targetRoot.panels.splice(targetIdx, 1, newPanel);
       }
-    };
-    let layoutClone = JSON.parse(JSON.stringify(layout));
-    mutateLayout(layoutClone);
+    }
     setLayout(layoutClone);
+  };
+
+  const findWrapper = (root: Panel, target: string): [Panel | null, number] => {
+    if (root.panels) {
+      let targetIdx = indexOfPanel(root.panels, target);
+      if (targetIdx !== -1) {
+        return [root, targetIdx];
+      }
+      for (let child of root.panels) {
+        let [panel, idx]: [Panel | null, number] = findWrapper(child, target);
+        if (panel) return [panel, idx];
+      }
+    }
+    return [null, -1];
   };
 
   const indexOfPanel = (
@@ -300,13 +295,19 @@ export default () => {
 
   const handleDragOver = (event: DragOverEvent) => {
     const { active, over } = event;
-    const transferTab = (root) => {
-      if (root.type === "panel") {
-        if (root.id === active.data.current?.parent) {
-          root.tabs = root.tabs?.filter(
+    if (!over || !active) return;
+    const isSortable = over?.data.current?.name;
+    if (isSortable) {
+      if (active.data.current?.parent !== over.data.current?.parent) {
+        let newLayout = JSON.parse(JSON.stringify(layout));
+        let activeRoot = findPanel(newLayout, active.data.current?.parent);
+        let overRoot = findPanel(newLayout, over?.data.current?.parent);
+        if (activeRoot) {
+          activeRoot.tabs = activeRoot.tabs?.filter(
             (e) => e.itemId !== active.data.current?.id
           );
-        } else if (root.id === over?.data.current?.parent) {
+        }
+        if (draggedTab && overRoot && overRoot.tabs) {
           const isBelowOverItem =
             over &&
             active.rect.current.translated &&
@@ -314,31 +315,23 @@ export default () => {
               over.rect.top + over.rect.height;
 
           const modifier = isBelowOverItem ? 1 : 0;
-          const overIdx = root.tabs
+          const overIdx = overRoot.tabs
             .map((e) => e.itemId)
             .indexOf(over?.data.current?.id);
           const newIdx =
-            overIdx >= 0 ? overIdx + modifier : root.tabs.length + 1;
-          root.tabs = [
-            ...root.tabs.slice(0, newIdx),
+            overIdx >= 0 ? overIdx + modifier : overRoot.tabs.length + 1;
+          overRoot.tabs = [
+            ...overRoot.tabs.slice(0, newIdx),
             {
-              id: draggedTab?.id,
-              itemId: draggedTab?.itemId,
-              type: draggedTab?.type,
-              name: draggedTab?.name,
+              id: draggedTab.id,
+              itemId: draggedTab.itemId,
+              type: draggedTab.type,
+              name: draggedTab.name,
             },
-            ...root.tabs.slice(newIdx, root.tabs.length),
+            ...overRoot.tabs.slice(newIdx, overRoot.tabs.length),
           ];
         }
-      } else if (root.panels) {
-        root.panels.forEach((child) => transferTab(child));
-      }
-    };
-    if (!over || !active) return;
-    const isSortable = over?.data.current?.name;
-    if (isSortable) {
-      if (active.data.current?.parent !== over.data.current?.parent) {
-        transferTab(layout);
+        setLayout(newLayout);
       }
     } else if (targetAreas.has(over.data.current?.type)) {
       setHoveringOver({
@@ -363,30 +356,26 @@ export default () => {
     });
   };
 
+  const findPanel = (root: Panel, target: string): Panel | undefined => {
+    if (root.type === "panel" && root.id === target) {
+      return root;
+    } else if (root.panels) {
+      for (let child of root.panels) {
+        let panel: Panel | undefined = findPanel(child, target);
+        if (panel) return panel;
+      }
+    }
+  };
+
   const handleDragEnd = (event: DragOverEvent) => {
     const { active, over } = event;
-    const mutateTabs = (root: Panel) => {
-      if (root.type === "panel" && root.id === active.data.current?.parent) {
-        const oldIdx = root.tabs
-          .map((e) => e.itemId)
-          .indexOf(active.data.current?.id);
-        const newIdx = root.tabs
-          .map((e) => e.itemId)
-          .indexOf(over?.data.current?.id);
-        root.tabs = arrayMove(root.tabs, oldIdx, newIdx);
-        return;
-      } else if (root.panels) {
-        root.panels.forEach((child) => mutateTabs(child));
-      }
-    };
     if (over && draggedTab) {
       if (draggedTab.originId === "sidebar") {
         const tabIdx = sidebarTabs.map((e) => e.id).indexOf(active.id);
-        console.info(sidebarTabs, active);
         if (tabIdx !== -1) {
-          let sidebarTabsClone = [...sidebarTabs];
-          sidebarTabsClone[tabIdx].id = genUniqueId();
-          setSidebarTabs(sidebarTabsClone);
+          let newTabs = [...sidebarTabs];
+          newTabs[tabIdx].id = genUniqueId();
+          setSidebarTabs(newTabs);
         }
       }
       if (targetAreas.has(hoveringOver.hover)) {
@@ -402,10 +391,18 @@ export default () => {
           }
         );
       } else if (active.id !== over.id) {
-        // ADD LOGIC WHEN PARENTS ARE NOT EQUAL
         let layoutClone = JSON.parse(JSON.stringify(layout));
-        mutateTabs(layoutClone);
-        setLayout(layoutClone);
+        let root = findPanel(layoutClone, active.data.current?.parent);
+        if (root && root.tabs) {
+          const oldIdx = root.tabs
+            .map((e) => e.itemId)
+            .indexOf(active.data.current?.id);
+          const newIdx = root.tabs
+            .map((e) => e.itemId)
+            .indexOf(over?.data.current?.id);
+          root.tabs = arrayMove(root.tabs, oldIdx, newIdx);
+          setLayout(layoutClone);
+        }
       }
     }
     setDraggedTab(null);
@@ -422,7 +419,6 @@ export default () => {
       } else if (root.panels) {
         for (let child of root.panels) {
           let panel: Panel | undefined = findFirstPanel(child);
-          console.info(child, panel);
           if (panel) return panel;
         }
       }
@@ -483,7 +479,7 @@ export default () => {
             <SidebarPanel tabs={sidebarTabs} openTab={handleOpenTab} />
           </Panel>
           <PanelResizeHandle className="w-2" />
-          <Panel>{renderLayout(layout)}</Panel>
+          {renderLayout(layout)}
         </PanelGroup>
         <DragOverlay>{draggedTab ? renderItem : null}</DragOverlay>
       </DndContext>
