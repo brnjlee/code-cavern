@@ -3,8 +3,9 @@ import { Tab } from "../../types";
 import SortableTab from "../SortableTab";
 type SidebarPanel = {
   tabs: Tab[];
+  openTab: (tab: Tab) => void;
 };
-const SidebarPanel = ({ tabs }: SidebarPanel) => {
+const SidebarPanel = ({ tabs, openTab }: SidebarPanel) => {
   const renderTabs = tabs
     .sort((a, b) => (a.name > b.name ? 1 : -1))
     .map(({ type, name, id, itemId }) => (
@@ -15,7 +16,7 @@ const SidebarPanel = ({ tabs }: SidebarPanel) => {
         name={name}
         type={type}
         parent={"sidebar"}
-        onClick={() => {}}
+        onClick={() => openTab({ type, name, id, itemId })}
         className=" hover:bg-gray-200 pl-2 pr-1 py-1 text-base"
       />
     ));

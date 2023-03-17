@@ -414,6 +414,40 @@ export default () => {
       hover: "",
     });
   };
+
+  const handleOpenTab = (tab: Tab) => {
+    const findFirstPanel = (root: Panel): Panel | undefined => {
+      if (root.tabs) {
+        return root;
+      } else if (root.panels) {
+        for (let child of root.panels) {
+          let panel: Panel | undefined = findFirstPanel(child);
+          console.info(child, panel);
+          if (panel) return panel;
+        }
+      }
+    };
+    if (layout.panels?.length) {
+      let layoutClone = JSON.parse(JSON.stringify(layout));
+      let root = findFirstPanel(layoutClone);
+      root?.tabs?.push({
+        ...tab,
+        id: genUniqueId(),
+      });
+      setLayout(layoutClone);
+      return;
+    }
+    setLayout({
+      ...layout,
+      panels: [
+        {
+          type: "panel",
+          id: genUniqueId(),
+          tabs: [tab],
+        },
+      ],
+    });
+  };
   const renderItem = (
     <Item
       id={draggedTab?.name ?? ""}
@@ -446,7 +480,7 @@ export default () => {
       >
         <PanelGroup direction="horizontal">
           <Panel defaultSize={15} maxSize={20}>
-            <SidebarPanel tabs={sidebarTabs} />
+            <SidebarPanel tabs={sidebarTabs} openTab={handleOpenTab} />
           </Panel>
           <PanelResizeHandle className="w-2" />
           <Panel>{renderLayout(layout)}</Panel>
