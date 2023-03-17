@@ -1,13 +1,14 @@
 import { CursorEditor, YHistoryEditor, YjsEditor } from "@slate-yjs/core";
-import { Descendant,BaseElement } from "slate";
+import { Descendant, BaseElement } from "slate";
 import { ReactEditor } from "slate-react";
-import {UniqueIdentifier} from "@dnd-kit/core";
+import { UniqueIdentifier } from "@dnd-kit/core";
 
 export type Tab = {
-	type: string;
-	name: string;
-	id: UniqueIdentifier
-}
+  type: string;
+  name: string;
+  itemId: UniqueIdentifier;
+  id: UniqueIdentifier;
+};
 
 export type CursorData = {
   name: string;
@@ -23,16 +24,16 @@ export type CustomText = {
 };
 
 export enum ElementType {
-  PARAGRAPH = 'paragraph',
+  PARAGRAPH = "paragraph",
   INLINE_CODE = "inline-code",
   HEADING_ONE = "heading-one",
   HEADING_TWO = "heading-two",
   HEADING_THREE = "heading-three",
-  ORDERED_LIST = 'ordered-list',
-  UNORDERED_LIST = 'unordered-list',
-  LIST_ITEM = 'list-item',
-  LIST_ITEM_TEXT = 'list-item-text',
-  BLOCK_QUOTE = 'block-quote'
+  ORDERED_LIST = "ordered-list",
+  UNORDERED_LIST = "unordered-list",
+  LIST_ITEM = "list-item",
+  LIST_ITEM_TEXT = "list-item-text",
+  BLOCK_QUOTE = "block-quote",
 }
 
 export type Paragraph = {

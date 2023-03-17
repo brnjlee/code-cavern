@@ -65,9 +65,10 @@ const TabContainer = ({
     [activeTabId, tabs]
   );
 
-  const renderTabs = tabs.map(({ type, name, id }, tabIdx) => (
+  const renderTabs = tabs.map(({ type, name, id, itemId }, tabIdx) => (
     <SortableTab
       key={id}
+      itemId={itemId}
       id={id}
       name={name}
       type={type}

@@ -14,6 +14,7 @@ type SortableTab = Tab & {
 };
 const SortableTab = ({
   id,
+  itemId,
   name,
   type,
   parent,
@@ -24,6 +25,7 @@ const SortableTab = ({
   return (
     <SortableItem
       id={id}
+      itemId={itemId}
       name={name}
       type={type}
       parent={parent}

@@ -9,10 +9,11 @@ type SidebarPanel = {
 const SidebarPanel = ({ tabs }: SidebarPanel) => {
   const renderTabs = tabs
     .sort((a, b) => (a.name > b.name ? 1 : -1))
-    .map(({ type, name, id }) => (
+    .map(({ type, name, id, itemId }) => (
       <SortableTab
         key={id}
         id={id + "-sidebar"}
+        itemId={itemId}
         name={name}
         type={type}
         parent={"sidebar"}

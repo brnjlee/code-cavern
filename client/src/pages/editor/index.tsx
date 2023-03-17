@@ -32,32 +32,38 @@ const DEFAULT_TABS = [
   {
     type: "code",
     name: "test9.py",
-    id: "500",
+    itemId: "500",
+    id: genUniqueId(),
   },
   {
     type: "code",
     name: "test2.py",
-    id: "501",
+    itemId: "501",
+    id: genUniqueId(),
   },
   {
     type: "code",
     name: "test3.py",
-    id: "502",
+    itemId: "502",
+    id: genUniqueId(),
   },
   {
     type: "code",
     name: "test4.py",
-    id: "503",
+    itemId: "503",
+    id: genUniqueId(),
   },
   {
     type: "text",
     name: "a.md",
-    id: "1",
+    itemId: "1",
+    id: genUniqueId(),
   },
   {
     type: "text",
     name: "test6.md",
-    id: "2",
+    itemId: "2",
+    id: genUniqueId(),
   },
 ];
 
@@ -184,7 +190,7 @@ export default () => {
         const sourceIdx = indexOfPanel(root.panels, originId);
         if (sourceIdx != -1) {
           root.panels[sourceIdx].tabs = root.panels[sourceIdx].tabs?.filter(
-            (e) => e.id !== tab.id
+            (e) => e.itemId !== tab.itemId
           );
         }
         if (targetIdx != -1 && !panelAdded) {
@@ -255,7 +261,9 @@ export default () => {
     const transferTab = (root) => {
       if (root.type === "panel") {
         if (root.id === active.data.current?.parent) {
-          root.tabs = root.tabs?.filter((e) => e.id !== active.id);
+          root.tabs = root.tabs?.filter(
+            (e) => e.itemId !== active.data.current?.id
+          );
         } else if (root.id === over?.data.current?.parent) {
           const isBelowOverItem =
             over &&
@@ -264,13 +272,16 @@ export default () => {
               over.rect.top + over.rect.height;
 
           const modifier = isBelowOverItem ? 1 : 0;
-          const overIdx = root.tabs.map((e) => e.id).indexOf(over?.id);
+          const overIdx = root.tabs
+            .map((e) => e.itemId)
+            .indexOf(over?.data.current?.id);
           const newIdx =
             overIdx >= 0 ? overIdx + modifier : root.tabs.length + 1;
           root.tabs = [
             ...root.tabs.slice(0, newIdx),
             {
               id: active.id,
+              itemId: active.data.current?.id,
               type: active.data.current?.type,
               name: active.data.current?.name,
             },
@@ -291,7 +302,7 @@ export default () => {
       const targetArea = over?.id.split("-").pop();
       if (targetAreas.has(targetArea)) {
         setHoveringOver({
-          containerId: over.data.current.parent,
+          containerId: over.data.current?.parent,
           hover: targetArea,
         });
         return;
@@ -305,9 +316,10 @@ export default () => {
   const handleDragStart = (event: DragOverEvent) => {
     const { active } = event;
     setDraggedTab({
+      itemId: active.data.current?.id,
+      name: active.data.current?.name,
+      type: active.data.current?.type,
       id: active.id,
-      name: active.data.current.name,
-      type: active.data.current.type,
     });
   };
 
@@ -315,8 +327,12 @@ export default () => {
     const { active, over } = event;
     const mutateTabs = (root: Panel) => {
       if (root.type === "panel" && root.id === active.data.current?.parent) {
-        const oldIdx = root.tabs.map((e) => e.id).indexOf(active.id);
-        const newIdx = root.tabs.map((e) => e.id).indexOf(over.id);
+        const oldIdx = root.tabs
+          .map((e) => e.itemId)
+          .indexOf(active.data.current?.id);
+        const newIdx = root.tabs
+          .map((e) => e.itemId)
+          .indexOf(over?.data.current?.id);
         root.tabs = arrayMove(root.tabs, oldIdx, newIdx);
         return;
       } else if (root.panels) {
@@ -326,7 +342,7 @@ export default () => {
     if (over && draggedTab) {
       if (targetAreas.has(hoveringOver.hover)) {
         handleCreateContainer(
-          active.data.current.parent,
+          active.data.current?.parent,
           hoveringOver.containerId,
           hoveringOver.hover,
           draggedTab

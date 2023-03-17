@@ -1,18 +1,16 @@
 import React from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { UniqueIdentifier } from "@dnd-kit/core";
-type SortableItemProps = {
+import { Tab } from "../../types";
+type SortableItemProps = Tab & {
   children: React.ReactNode;
-  id: UniqueIdentifier;
-  name: string;
-  type: string;
   parent: string;
   className: string;
   onClick: () => void;
 };
 const SortableItem = ({
   children,
+  itemId,
   id,
   name,
   type,
@@ -21,7 +19,7 @@ const SortableItem = ({
   onClick,
 }: SortableItemProps) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id, data: { name, type, parent } });
+    useSortable({ id, data: { id: itemId, name, type, parent } });
 
   const style = {
     transform: CSS.Transform.toString(transform),
