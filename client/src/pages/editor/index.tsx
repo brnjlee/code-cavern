@@ -90,7 +90,7 @@ const targetAreas = new Set<UniqueIdentifier>([
 
 type Panel = {
   type: string;
-  id?: string;
+  id: string;
   tabs?: Tab[];
   panels?: Panel[];
 };
@@ -106,6 +106,7 @@ export default () => {
   });
   const [layout, setLayout] = useState<Panel>({
     type: "root",
+    id: genUniqueId(),
     panels: [
       {
         type: "panel",
@@ -115,17 +116,41 @@ export default () => {
     ],
   });
 
+  const collapseContainer = (
+    grandParent: Panel | null,
+    parent: Panel | null,
+    containerId: string
+  ) => {
+    const containerIdx = indexOfPanel(parent?.panels, containerId);
+    if (containerIdx !== -1) {
+      parent?.panels?.splice(containerIdx, 1);
+      if (parent?.panels?.length === 1 && grandParent && grandParent.panels) {
+        const wrapperIdx = indexOfPanel(grandParent.panels, parent.id);
+        if (wrapperIdx !== -1) {
+          grandParent.panels[wrapperIdx] = parent.panels[0];
+        }
+      }
+    }
+  };
+
   const handleCloseTab = (tabIdx: number, containerId: string) => {
-    const closeTab = (root: Panel) => {
+    const closeTab = (
+      grandParent: Panel | null,
+      parent: Panel | null,
+      root: Panel
+    ) => {
       if (root.type === "panel" && root.id === containerId) {
         root.tabs?.splice(tabIdx, 1);
+        if (!root.tabs?.length) {
+          collapseContainer(grandParent, parent, containerId);
+        }
         return;
       } else if (root.panels) {
-        root.panels.forEach((child) => closeTab(child));
+        root.panels.forEach((child) => closeTab(parent, root, child));
       }
     };
     let layoutClone = JSON.parse(JSON.stringify(layout));
-    closeTab(layoutClone);
+    closeTab(null, null, layoutClone);
     setLayout(layoutClone);
   };
 
@@ -212,6 +237,7 @@ export default () => {
           } else {
             newPanel = {
               type: directionTable[targetArea as keyof DirectionTable],
+              id: genUniqueId(),
               panels: [
                 {
                   type: "panel",
@@ -237,7 +263,11 @@ export default () => {
     setLayout(layoutClone);
   };
 
-  const indexOfPanel = (panels: Panel[], id: string) => {
+  const indexOfPanel = (
+    panels: Panel[] | undefined,
+    id: string | undefined
+  ) => {
+    if (!panels || !id) return -1;
     for (let i = 0; i < panels.length; i++) {
       const root = panels[i];
       if (root.id === id) {

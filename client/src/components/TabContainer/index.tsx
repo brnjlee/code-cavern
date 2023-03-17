@@ -42,7 +42,7 @@ const TabContainer = ({
   hoveringOver,
   closeTab,
 }: TabContainer) => {
-  const [activeTabId, setActiveTabId] = useState(tabs[0].id);
+  const [activeTabId, setActiveTabId] = useState(null);
   const [activeName, setActiveName] = useState(null);
 
   useEffect(() => {
