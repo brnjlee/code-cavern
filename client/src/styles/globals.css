@@ -17,6 +17,7 @@ body {
   padding-right: 10px;
   /* position: fixed; */
 }
+
 ::-webkit-scrollbar {
   width: 10px;
 }

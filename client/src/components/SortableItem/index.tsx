@@ -6,6 +6,7 @@ type SortableItemProps = Tab & {
   children: React.ReactNode;
   parent: string;
   className: string;
+  disabled: boolean;
   onClick: () => void;
 };
 const SortableItem = ({
@@ -14,12 +15,13 @@ const SortableItem = ({
   id,
   name,
   type,
+  disabled,
   parent,
   className,
   onClick,
 }: SortableItemProps) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id, data: { id: itemId, name, type, parent } });
+    useSortable({ id, disabled, data: { id: itemId, name, type, parent } });
 
   const style = {
     transform: CSS.Transform.toString(transform),

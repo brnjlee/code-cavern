@@ -10,6 +10,7 @@ type SortableTab = Tab & {
   parent: string;
   className: string;
   onClick: () => void;
+  disabled: boolean;
   children?: React.ReactNode;
 };
 const SortableTab = ({
@@ -34,7 +35,7 @@ const SortableTab = ({
       ) : (
         <FaPython className="text-cyan-500 mr-1.5 text-base" />
       )}
-      <span>{name}</span>
+      <span className="font-semibold text-slate-600">{name}</span>
       {children}
     </SortableItem>
   );

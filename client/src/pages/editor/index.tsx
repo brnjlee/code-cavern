@@ -1,10 +1,5 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
-import {
-  PanelGroup,
-  Panel,
-  PanelResizeHandle,
-  Direction,
-} from "react-resizable-panels";
+import React, { useState } from "react";
+import { PanelGroup, Panel, PanelResizeHandle } from "react-resizable-panels";
 import {
   DndContext,
   KeyboardSensor,
@@ -16,12 +11,7 @@ import {
   DragOverEvent,
   UniqueIdentifier,
 } from "@dnd-kit/core";
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  horizontalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { FaPython } from "react-icons/fa";
 import { MdTextSnippet } from "react-icons/md";
@@ -29,9 +19,10 @@ import clsx from "clsx";
 
 import Item from "../../components/Item";
 import TabContainer from "../../components/TabContainer";
-import SidebarPanel from "../../components/SidebarPanel";
+import FilesPanel from "../../components/FilesPanel";
+import Sidebar from "../../components/Sidebar";
 import { genUniqueId } from "../../utils/utils";
-import { Tab } from "../../types";
+import { Tab, TabParents } from "../../types";
 
 const DEFAULT_TABS = [
   {
@@ -107,9 +98,11 @@ type HoveringOver = {
 type DraggedTab = Tab & {
   originId: string;
 };
+
 export default () => {
   const [draggedTab, setDraggedTab] = useState<DraggedTab | null>(null);
   const [sidebarTabs, setSidebarTabs] = useState<Tab[]>(DEFAULT_TABS);
+  const [tabParents, setTabParents] = useState<TabParents>({});
   const [hoveringOver, setHoveringOver] = useState<HoveringOver>({
     containerId: "",
     hover: "",
@@ -117,20 +110,7 @@ export default () => {
   const [layout, setLayout] = useState<Panel>({
     type: "horizontal",
     id: genUniqueId(),
-    panels: [
-      {
-        type: "panel",
-        id: genUniqueId(),
-        tabs: [
-          {
-            type: "code",
-            name: "test9.py",
-            itemId: "500",
-            id: genUniqueId(),
-          },
-        ],
-      },
-    ],
+    panels: [],
   });
 
   const collapseContainer = (
@@ -171,10 +151,10 @@ export default () => {
     setLayout(layoutClone);
   };
 
-  const renderLayout = (root: Panel) => {
+  const renderLayout = (root: Panel, isRoot: boolean) => {
     if (root.type === "panel") {
       return (
-        <Panel>
+        <Panel className="bg-slate-100">
           <TabContainer
             key={root.id}
             tabs={root.tabs || []}
@@ -189,11 +169,11 @@ export default () => {
     }
     const resizeHandleClass = root.type === "horizontal" ? "w-2" : "h-2";
     return (
-      <Panel>
+      <Panel className={clsx(isRoot && "py-5 pr-5", "bg-slate-100")}>
         <PanelGroup direction={root.type}>
-          {root.panels.map((child: Panel, i: number) => (
+          {root.panels?.map((child: Panel, i: number) => (
             <>
-              {renderLayout(child)}
+              {renderLayout(child, false)}
               {i < root.panels.length - 1 ? (
                 <PanelResizeHandle className={resizeHandleClass} />
               ) : null}
@@ -283,15 +263,6 @@ export default () => {
     }
     return -1;
   };
-
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: { distance: 10 },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
 
   const handleDragOver = (event: DragOverEvent) => {
     const { active, over } = event;
@@ -412,38 +383,66 @@ export default () => {
     });
   };
 
-  const handleOpenTab = (tab: Tab) => {
-    const findFirstPanel = (root: Panel): Panel | undefined => {
-      if (root.tabs) {
-        return root;
-      } else if (root.panels) {
-        for (let child of root.panels) {
-          let panel: Panel | undefined = findFirstPanel(child);
-          if (panel) return panel;
-        }
+  const findFirstPanel = (root: Panel): Panel | undefined => {
+    if (root.tabs) {
+      return root;
+    } else if (root.panels) {
+      for (let child of root.panels) {
+        let panel: Panel | undefined = findFirstPanel(child);
+        if (panel) return panel;
       }
-    };
+    }
+  };
+
+  const handleOpenTab = (tab: Tab) => {
+    if (tabParents[tab.itemId]) {
+      return;
+    }
     if (layout.panels?.length) {
       let layoutClone = JSON.parse(JSON.stringify(layout));
       let root = findFirstPanel(layoutClone);
-      root?.tabs?.push({
-        ...tab,
-        id: genUniqueId(),
-      });
-      setLayout(layoutClone);
+      if (root && root.tabs) {
+        root.tabs.push({
+          ...tab,
+          id: genUniqueId(),
+        });
+        setLayout(layoutClone);
+        setTabParents({
+          ...tabParents,
+          [tab.itemId]: root.id,
+        });
+      }
       return;
     }
+    const rootId = genUniqueId();
     setLayout({
       ...layout,
       panels: [
         {
           type: "panel",
-          id: genUniqueId(),
-          tabs: [tab],
+          id: rootId,
+          tabs: [
+            {
+              ...tab,
+              id: genUniqueId(),
+            },
+          ],
         },
       ],
     });
+    setTabParents({
+      ...tabParents,
+      [tab.itemId]: rootId,
+    });
   };
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: { distance: 10 },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
   const renderItem = (
     <Item
       id={draggedTab?.name ?? ""}
@@ -454,7 +453,7 @@ export default () => {
       ) : (
         <FaPython className="text-cyan-500 mr-1.5 text-base" />
       )}
-      <span>{draggedTab?.name}</span>
+      <span className="font-semibold text-slate-600">{draggedTab?.name}</span>
       <button
         className={clsx(
           "h-5 w-5 ml-1 flex justify-center items-center hover:bg-gray-100 rounded-full p-[3px]"
@@ -466,23 +465,34 @@ export default () => {
   );
 
   return (
-    <div className="h-screen bg-slate-200 p-10">
-      <DndContext
-        sensors={sensors}
-        collisionDetection={rectIntersection}
-        onDragOver={handleDragOver}
-        onDragStart={handleDragStart}
-        onDragEnd={handleDragEnd}
-      >
-        <PanelGroup direction="horizontal">
-          <Panel defaultSize={15} maxSize={20}>
-            <SidebarPanel tabs={sidebarTabs} openTab={handleOpenTab} />
-          </Panel>
-          <PanelResizeHandle className="w-2" />
-          {renderLayout(layout)}
-        </PanelGroup>
-        <DragOverlay>{draggedTab ? renderItem : null}</DragOverlay>
-      </DndContext>
+    <div className="h-screen bg-slate-300">
+      <div className="h-full flex">
+        <Sidebar />
+        <DndContext
+          sensors={sensors}
+          collisionDetection={rectIntersection}
+          onDragOver={handleDragOver}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+        >
+          <PanelGroup direction="horizontal">
+            <Panel
+              defaultSize={15}
+              maxSize={20}
+              className="bg-slate-100 rounded-l-xl"
+            >
+              <FilesPanel
+                tabs={sidebarTabs}
+                openTab={handleOpenTab}
+                openedTabs={tabParents}
+              />
+            </Panel>
+            <PanelResizeHandle className="w-2 bg-slate-100" />
+            {renderLayout(layout, true)}
+          </PanelGroup>
+          <DragOverlay>{draggedTab ? renderItem : null}</DragOverlay>
+        </DndContext>
+      </div>
     </div>
   );
 };

@@ -10,6 +10,10 @@ export type Tab = {
   id: UniqueIdentifier;
 };
 
+export type TabParents = {
+  [key: string]: string;
+};
+
 export type CursorData = {
   name: string;
   color: string;
