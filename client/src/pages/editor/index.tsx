@@ -99,10 +99,15 @@ type DraggedTab = Tab & {
   originId: string;
 };
 
+type ActiveTabs = {
+  [key: string]: UniqueIdentifier;
+};
+
 export default () => {
   const [draggedTab, setDraggedTab] = useState<DraggedTab | null>(null);
   const [sidebarTabs, setSidebarTabs] = useState<Tab[]>(DEFAULT_TABS);
   const [tabParents, setTabParents] = useState<TabParents>({});
+  const [activeTabs, setActiveTabs] = useState<ActiveTabs>({});
   const [hoveringOver, setHoveringOver] = useState<HoveringOver>({
     containerId: "",
     hover: "",
@@ -163,6 +168,10 @@ export default () => {
           <TabContainer
             key={root.id}
             tabs={root.tabs || []}
+            activeItemId={activeTabs[root.id]}
+            setActiveItemId={(itemId) =>
+              setActiveTabs({ ...activeTabs, [root.id]: itemId })
+            }
             containerId={root.id || ""}
             hoveringOver={
               hoveringOver.containerId === root.id ? hoveringOver.hover : ""
@@ -411,9 +420,7 @@ export default () => {
   };
 
   const handleOpenTab = (tab: Tab) => {
-    if (tabParents[tab.itemId] && tabParents[tab.itemId].length) {
-      return;
-    }
+    if (tabParents[tab.itemId] && tabParents[tab.itemId].length) return;
     if (layout.panels?.length) {
       let layoutClone = JSON.parse(JSON.stringify(layout));
       let root = findFirstPanel(layoutClone);
@@ -447,19 +454,33 @@ export default () => {
   };
 
   const pushTabParent = (itemId: UniqueIdentifier, rootId: string) => {
-    console.log(itemId, rootId);
     setTabParents((prev) => ({
       ...prev,
       [itemId]: prev[itemId] ? [...prev[itemId], rootId] : [rootId],
     }));
+    setActiveTabs((prev) => ({
+      ...prev,
+      [rootId]: itemId,
+    }));
   };
 
   const popTabParent = (itemId: UniqueIdentifier, rootId: string) => {
-    console.log(itemId, rootId);
     setTabParents((prev) => ({
       ...prev,
       [itemId]: prev[itemId].filter((p) => p !== rootId),
     }));
+    setActiveTabs((prev) => ({
+      ...prev,
+      [rootId]: getFirstTab(itemId, rootId),
+    }));
+  };
+  const getFirstTab = (avoidId: UniqueIdentifier, rootId: string) => {
+    for (let itemId in tabParents) {
+      if (itemId != avoidId && tabParents[itemId].includes(rootId)) {
+        return itemId;
+      }
+    }
+    return "";
   };
   const sensors = useSensors(
     useSensor(PointerSensor, {

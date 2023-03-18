@@ -31,6 +31,8 @@ import { Tab } from "../../types";
 
 type TabContainer = {
   tabs: Tab[];
+  activeItemId: UniqueIdentifier;
+  setActiveItemId: (itemId: UniqueIdentifier) => void;
   containerId: string;
   hoveringOver: UniqueIdentifier;
   closeTab: (itemId: string, tabIdx: number) => void;
@@ -38,18 +40,20 @@ type TabContainer = {
 
 const TabContainer = ({
   tabs,
+  activeItemId,
+  setActiveItemId,
   containerId,
   hoveringOver,
   closeTab,
 }: TabContainer) => {
-  const [activeTabId, setActiveTabId] = useState(null);
+  // const [activeTabId, setActiveTabId] = useState(null);
   const [activeName, setActiveName] = useState(null);
 
-  useEffect(() => {
-    if (!tabs.map((e) => e.id).includes(activeTabId)) {
-      setActiveTabId(tabs[0].id);
-    }
-  }, [tabs]);
+  // useEffect(() => {
+  //   if (!tabs.map((e) => e.itemId).includes(activeItemId)) {
+  //     setActiveTabId(tabs[0].id);
+  //   }
+  // }, [tabs]);
 
   const hoverContainers = [
     {
@@ -74,12 +78,9 @@ const TabContainer = ({
     },
   ];
   // const [hoveringOver, setHoveringOver] = useState<UniqueIdentifier>("");
-  const activeTab = useCallback(
-    (id: UniqueIdentifier) => {
-      return tabs.find((t) => t.id === id);
-    },
-    [activeTabId, tabs]
-  );
+  const activeTab = useCallback(() => {
+    return tabs.find((t) => t.itemId === activeItemId);
+  }, [activeItemId, tabs]);
 
   const renderTabs = tabs.map(({ type, name, id, itemId }, tabIdx) => (
     <SortableTab
@@ -90,9 +91,9 @@ const TabContainer = ({
       name={name}
       type={type}
       parent={containerId}
-      onClick={() => setActiveTabId(id)}
+      onClick={() => setActiveItemId(itemId)}
       className={clsx(
-        activeTabId === id && "bg-slate-200 pl-4 pr-3",
+        activeItemId === itemId && "bg-slate-200 pl-4 pr-3",
         "text-sm bg-gray-100 hover:bg-gray-200 pl-2 pr-1 py-1 ml-1.5"
       )}
     >
@@ -126,7 +127,7 @@ const TabContainer = ({
   );
 
   const renderContent = () => {
-    switch (activeTab(activeTabId)?.type) {
+    switch (activeTab()?.type) {
       case "code":
         return <CodeEditor />;
       case "text":
