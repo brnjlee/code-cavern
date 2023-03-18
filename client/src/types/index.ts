@@ -11,7 +11,7 @@ export type Tab = {
 };
 
 export type TabParents = {
-  [key: string]: string;
+  [key: string]: string[];
 };
 
 export type CursorData = {

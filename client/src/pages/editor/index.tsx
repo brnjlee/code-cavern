@@ -130,7 +130,11 @@ export default () => {
     }
   };
 
-  const handleCloseTab = (tabIdx: number, containerId: string) => {
+  const handleCloseTab = (
+    itemId: string,
+    tabIdx: number,
+    containerId: string
+  ) => {
     const closeTab = (
       grandParent: Panel | null,
       parent: Panel | null,
@@ -149,12 +153,13 @@ export default () => {
     let layoutClone = JSON.parse(JSON.stringify(layout));
     closeTab(null, null, layoutClone);
     setLayout(layoutClone);
+    popTabParent(itemId, containerId);
   };
 
   const renderLayout = (root: Panel, isRoot: boolean) => {
     if (root.type === "panel") {
       return (
-        <Panel className="bg-slate-100">
+        <Panel className="bg-slate-100 shadow-lg">
           <TabContainer
             key={root.id}
             tabs={root.tabs || []}
@@ -162,15 +167,19 @@ export default () => {
             hoveringOver={
               hoveringOver.containerId === root.id ? hoveringOver.hover : ""
             }
-            closeTab={(tabIdx) => handleCloseTab(tabIdx, root.id)}
+            closeTab={(itemId, tabIdx) =>
+              handleCloseTab(itemId, tabIdx, root.id)
+            }
           />
         </Panel>
       );
     }
     const resizeHandleClass = root.type === "horizontal" ? "w-2" : "h-2";
     return (
-      <Panel className={clsx(isRoot && "py-5 pr-5", "bg-slate-100")}>
-        <PanelGroup direction={root.type}>
+      <Panel
+        className={clsx(isRoot && "py-5 pr-5", "bg-slate-100 overflow-visible")}
+      >
+        <PanelGroup direction={root.type} className="overflow-visible">
           {root.panels?.map((child: Panel, i: number) => (
             <>
               {renderLayout(child, false)}
@@ -199,13 +208,14 @@ export default () => {
     }
     if (targetRoot && targetRoot.panels) {
       let newPanel: Panel;
+      const newPanelId = genUniqueId();
       if (
         directionTable[targetArea as keyof DirectionTable] ===
         (targetRoot.type === "root" ? "horizontal" : targetRoot.type)
       ) {
         newPanel = {
           type: "panel",
-          id: genUniqueId(),
+          id: newPanelId,
           tabs: [tab],
         };
         if (targetArea === "right" || targetArea === "bottom") {
@@ -220,7 +230,7 @@ export default () => {
           panels: [
             {
               type: "panel",
-              id: genUniqueId(),
+              id: newPanelId,
               tabs: [tab],
             },
           ],
@@ -232,6 +242,8 @@ export default () => {
         }
         targetRoot.panels.splice(targetIdx, 1, newPanel);
       }
+      popTabParent(tab.itemId, sourceId);
+      pushTabParent(tab.itemId, newPanelId);
     }
     setLayout(layoutClone);
   };
@@ -277,6 +289,9 @@ export default () => {
           activeRoot.tabs = activeRoot.tabs?.filter(
             (e) => e.itemId !== active.data.current?.id
           );
+          if (draggedTab) {
+            popTabParent(draggedTab.itemId, draggedTab.originId);
+          }
         }
         if (draggedTab && overRoot && overRoot.tabs) {
           const isBelowOverItem =
@@ -301,6 +316,7 @@ export default () => {
             },
             ...overRoot.tabs.slice(newIdx, overRoot.tabs.length),
           ];
+          pushTabParent(draggedTab.itemId, over.data.current?.parent);
         }
         setLayout(newLayout);
       }
@@ -395,7 +411,7 @@ export default () => {
   };
 
   const handleOpenTab = (tab: Tab) => {
-    if (tabParents[tab.itemId]) {
+    if (tabParents[tab.itemId] && tabParents[tab.itemId].length) {
       return;
     }
     if (layout.panels?.length) {
@@ -407,10 +423,7 @@ export default () => {
           id: genUniqueId(),
         });
         setLayout(layoutClone);
-        setTabParents({
-          ...tabParents,
-          [tab.itemId]: root.id,
-        });
+        pushTabParent(tab.itemId, root.id);
       }
       return;
     }
@@ -430,10 +443,23 @@ export default () => {
         },
       ],
     });
-    setTabParents({
-      ...tabParents,
-      [tab.itemId]: rootId,
-    });
+    pushTabParent(tab.itemId, rootId);
+  };
+
+  const pushTabParent = (itemId: UniqueIdentifier, rootId: string) => {
+    console.log(itemId, rootId);
+    setTabParents((prev) => ({
+      ...prev,
+      [itemId]: prev[itemId] ? [...prev[itemId], rootId] : [rootId],
+    }));
+  };
+
+  const popTabParent = (itemId: UniqueIdentifier, rootId: string) => {
+    console.log(itemId, rootId);
+    setTabParents((prev) => ({
+      ...prev,
+      [itemId]: prev[itemId].filter((p) => p !== rootId),
+    }));
   };
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -443,6 +469,7 @@ export default () => {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
+
   const renderItem = (
     <Item
       id={draggedTab?.name ?? ""}

@@ -33,7 +33,7 @@ type TabContainer = {
   tabs: Tab[];
   containerId: string;
   hoveringOver: UniqueIdentifier;
-  closeTab: (tabIdx: number) => void;
+  closeTab: (itemId: string, tabIdx: number) => void;
 };
 
 const TabContainer = ({
@@ -103,7 +103,7 @@ const TabContainer = ({
         type="button"
         onClick={(event) => {
           event.stopPropagation();
-          closeTab(tabIdx);
+          closeTab(itemId, tabIdx);
         }}
       >
         <Cross2Icon className={"text-black"} />

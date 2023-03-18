@@ -22,9 +22,9 @@ const FilesPanel = ({ tabs, openTab, openedTabs }: FilesPanel) => {
         onClick={() => openTab({ type, name, id, itemId })}
         className=" group hover:bg-gray-200 pl-2 pr-1 py-1 text-base"
       >
-        {openedTabs[itemId] && (
+        {openedTabs[itemId]?.length ? (
           <div className="absolute left-0 w-1 h-3 ml-auto bg-slate-300 rounded-r-[2rem] rounded-l-none group-hover:h-5 transition-all" />
-        )}
+        ) : null}
       </SortableTab>
     ));
   return (
