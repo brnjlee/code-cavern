@@ -107,6 +107,7 @@ export default () => {
   const [draggedTab, setDraggedTab] = useState<DraggedTab | null>(null);
   const [sidebarTabs, setSidebarTabs] = useState<Tab[]>(DEFAULT_TABS);
   const [tabParents, setTabParents] = useState<TabParents>({});
+  const [workspace, setWorkspace] = useState("1");
   const [activeTabs, setActiveTabs] = useState<ActiveTabs>({});
   const [hoveringOver, setHoveringOver] = useState<HoveringOver>({
     containerId: "",
@@ -420,7 +421,13 @@ export default () => {
   };
 
   const handleOpenTab = (tab: Tab) => {
-    if (tabParents[tab.itemId] && tabParents[tab.itemId].length) return;
+    if (tabParents[tab.itemId] && tabParents[tab.itemId].length) {
+      setActiveTabs({
+        ...activeTabs,
+        [tabParents[tab.itemId][tabParents[tab.itemId].length - 1]]: tab.itemId,
+      });
+      return;
+    }
     if (layout.panels?.length) {
       let layoutClone = JSON.parse(JSON.stringify(layout));
       let root = findFirstPanel(layoutClone);
@@ -515,7 +522,7 @@ export default () => {
   return (
     <div className="h-screen bg-slate-300">
       <div className="h-full flex">
-        <Sidebar />
+        <Sidebar active={workspace} onClick={(id) => setWorkspace(id)} />
         <DndContext
           sensors={sensors}
           collisionDetection={rectIntersection}

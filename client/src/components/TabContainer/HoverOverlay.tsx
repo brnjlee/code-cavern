@@ -18,7 +18,7 @@ const HoverOverlay = ({ hoveringOver }: { hoveringOver: UniqueIdentifier }) => {
   return (
     <div
       className={clsx(
-        "transition-all opacity-0 absolute bg-blue-300 z-10",
+        "transition-all opacity-0 absolute bg-blue-300 z-10 rounded",
         className()
       )}
     />

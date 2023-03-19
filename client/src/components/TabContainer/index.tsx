@@ -1,25 +1,12 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useCallback } from "react";
+import { UniqueIdentifier } from "@dnd-kit/core";
 import {
-  DndContext,
-  KeyboardSensor,
-  PointerSensor,
-  DragOverlay,
-  useSensor,
-  useSensors,
-  rectIntersection,
-  DragOverEvent,
-  UniqueIdentifier,
-} from "@dnd-kit/core";
-import {
-  arrayMove,
   SortableContext,
-  sortableKeyboardCoordinates,
   horizontalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { Cross2Icon } from "@radix-ui/react-icons";
-import { FaPython } from "react-icons/fa";
-import { MdTextSnippet } from "react-icons/md";
+import { IoClose } from "react-icons/io5";
 import clsx from "clsx";
+import { FiPlus } from "react-icons/fi";
 
 import Droppable from "../Droppable";
 import SortableTab from "../SortableTab";
@@ -46,15 +33,6 @@ const TabContainer = ({
   hoveringOver,
   closeTab,
 }: TabContainer) => {
-  // const [activeTabId, setActiveTabId] = useState(null);
-  const [activeName, setActiveName] = useState(null);
-
-  // useEffect(() => {
-  //   if (!tabs.map((e) => e.itemId).includes(activeItemId)) {
-  //     setActiveTabId(tabs[0].id);
-  //   }
-  // }, [tabs]);
-
   const hoverContainers = [
     {
       containerId,
@@ -77,7 +55,6 @@ const TabContainer = ({
       className: "col-span-3",
     },
   ];
-  // const [hoveringOver, setHoveringOver] = useState<UniqueIdentifier>("");
   const activeTab = useCallback(() => {
     return tabs.find((t) => t.itemId === activeItemId);
   }, [activeItemId, tabs]);
@@ -94,12 +71,12 @@ const TabContainer = ({
       onClick={() => setActiveItemId(itemId)}
       className={clsx(
         activeItemId === itemId && "bg-slate-200 pl-4 pr-3",
-        "text-sm bg-gray-100 hover:bg-gray-200 pl-2 pr-1 py-1 ml-1.5"
+        "text-sm bg-gray-100 hover:bg-gray-200 pl-2 pr-1 ml-1.5 h-7"
       )}
     >
       <button
         className={clsx(
-          "h-5 w-5 ml-1 flex justify-center hover:bg-gray-100 rounded-full p-[3px]"
+          "transition-all h-5 w-5 ml-1 flex justify-center hover:bg-white hover:text-red-500 rounded-lg p-[3px] text-slate-500"
         )}
         type="button"
         onClick={(event) => {
@@ -107,7 +84,7 @@ const TabContainer = ({
           closeTab(itemId, tabIdx);
         }}
       >
-        <Cross2Icon className={"text-black"} />
+        <IoClose />
       </button>
     </SortableTab>
   ));
@@ -140,6 +117,14 @@ const TabContainer = ({
       <SortableContext items={tabs} strategy={horizontalListSortingStrategy}>
         <div className="bg-white h-10 flex items-center rounded-t">
           {renderTabs}
+          <button
+            type="button"
+            className={clsx(
+              "transition-all text-slate-400 h-6 w-6 ml-1 flex justify-center items-center hover:text-slate-600 hover:bg-slate-200 rounded-lg p-[3px]"
+            )}
+          >
+            <FiPlus className="h-4 w-4" />
+          </button>
         </div>
       </SortableContext>
       <div className="top-10 absolute h-[calc(100%-2.5rem)] right-0 left-0 grid grid-cols-5 grid-rows-2">

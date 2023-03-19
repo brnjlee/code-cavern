@@ -3,6 +3,14 @@
 @tailwind utilities;
 @import "codemirror/lib/codemirror.css";
 @import "codemirror/theme/material.css";
+
+:root {
+  --tooltip-text-color: white;
+  --tooltip-background-color: rgb(51 65 85);
+  --tooltip-margin: 7px;
+  --tooltip-arrow-size: 4px;
+}
+
 html,
 body {
   height: 100vh;
