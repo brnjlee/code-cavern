@@ -3,7 +3,7 @@ import { HocuspocusProvider } from "@hocuspocus/provider";
 import * as Y from "yjs";
 import RandomColor from "randomcolor";
 import { WebsocketProvider } from "y-websocket";
-import { WebrtcProvider } from "y-webrtc";
+import { WebrtcProvider } from "../../utils/yjs/y-webrtc";
 import dynamic from "next/dynamic";
 
 import { ConnectionToggle } from "../../components/ConnectionToggle";
@@ -23,7 +23,7 @@ const Uncontrolled = dynamic(
 );
 
 let provider: any = null;
-export default () => {
+const CodeEditor = ({ id }: { id: string }) => {
   const [EditorRef, setEditorRef] = useState(null);
   const [code, setCode] = useState("");
   const [connected, setConnected] = useState(false);
@@ -35,11 +35,7 @@ export default () => {
   useEffect(() => {
     if (EditorRef) {
       const ydoc = new Y.Doc();
-      provider = new WebsocketProvider(
-        "ws://localhost:1234/collaboration/6",
-        "hocuspocus-demos-codemirror",
-        ydoc
-      );
+      provider = new WebrtcProvider(id, ydoc);
       const yText = ydoc.getText("codemirror");
       const yUndoManager = new Y.UndoManager(yText);
       const awareness = provider.awareness;
@@ -66,14 +62,14 @@ export default () => {
       };
     }
   }, [EditorRef]);
-  const toggleConnection = useCallback(() => {
-    if (connected) {
-      setConnected(false);
-      return provider.disconnect();
-    }
-    setConnected(true);
-    provider.connect();
-  }, [provider, connected]);
+  // const toggleConnection = useCallback(() => {
+  //   if (connected) {
+  //     setConnected(false);
+  //     return provider.disconnect();
+  //   }
+  //   setConnected(true);
+  //   provider.connect();
+  // }, [provider, connected]);
 
   return (
     <div className="flex h-full w-full rounded-b overflow-y-auto text-base">
@@ -103,7 +99,9 @@ export default () => {
           editor.setSize("100vw", "100%");
         }}
       />
-      <ConnectionToggle connected={connected} onClick={toggleConnection} />
+      {/* <ConnectionToggle connected={connected} onClick={toggleConnection} /> */}
     </div>
   );
 };
+
+export default CodeEditor;
