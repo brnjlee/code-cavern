@@ -11,7 +11,7 @@ async function main() {
     create: {
       email: 'test@test.com',
       name: 'Brian Lee',
-      avatar: 'avatarlink.com',
+      image: 'avatarlink.com',
     },
   });
 
