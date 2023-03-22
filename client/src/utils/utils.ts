@@ -27,3 +27,11 @@ export function addAlpha(hexColor: string, opacity: number): string {
 export function genUniqueId() {
   return uuidv4().slice(0, 8);
 }
+
+export function curateDocuments(documents: any[]) {
+  return documents.map((document) => ({
+    ...document,
+    itemId: document.id,
+    id: genUniqueId(),
+  }));
+}

@@ -1,27 +1,26 @@
 import React from "react";
 import clsx from "clsx";
 import { FiPlus } from "react-icons/fi";
+import Link from "next/link";
 
 import Tooltip from "../Tooltip";
 
 const Sidebar = ({
+  spaces,
   active,
-  onClick,
+  openCreateModal,
 }: {
-  active: string;
-  onClick: (id: string) => void;
+  spaces: any[];
+  active?: string;
+  openCreateModal: () => void;
 }) => {
-  const SidebarItems = [
-    { id: "1", name: "Project 1", label: "bs" },
-    { id: "2", name: "Project 2", label: "tp" },
-    { id: "3", name: "Project 3", label: "kl" },
-  ];
-  const renderSidebarItems = SidebarItems.map(({ id, name, label }) => (
+  const renderSidebarItems = spaces.map(({ id, name }) => (
     <Tooltip key={id} className="mb-2" label={name} direction="right">
       <SidebarItem
-        name={label}
-        onClick={() => onClick(id)}
-        selected={active === id}
+        id={id}
+        name={name[0]}
+        selected={active === String(id)}
+        className="bg-slate-400 hover:bg-slate-100 hover:text-slate-600 text-white"
       />
     </Tooltip>
   ));
@@ -30,9 +29,9 @@ const Sidebar = ({
       {renderSidebarItems}
       <Tooltip className="mb-2" label={"Add workspace"} direction="right">
         <SidebarItem
-          onClick={() => {}}
+          onClick={openCreateModal}
           selected={false}
-          bgClass="bg-slate-100 hover:bg-green-600 text-green-600 hover:text-slate-100"
+          className="bg-slate-100 hover:bg-green-600 text-green-600 hover:text-slate-100"
         >
           <FiPlus className="h-6 w-6 " />
         </SidebarItem>
@@ -42,27 +41,27 @@ const Sidebar = ({
 };
 
 const SidebarItem = ({
+  id,
   name,
-  onClick,
   selected,
   children,
-  bgClass = "bg-slate-400 hover:bg-slate-100 hover:text-slate-600",
+  className,
 }: {
+  id: string;
   name?: string;
-  onClick: () => void;
   selected: boolean;
   children?: React.ReactNode;
-  bgClass?: string;
+  className?: string;
 }) => {
   return (
-    <div
+    <Link
+      href={`/space/${id}`}
       className={clsx(
         selected
           ? "rounded-l-[1.4rem] rounded-r-none bg-slate-100 w-full"
-          : bgClass + " " + "hover:rounded-[1rem] text-white",
+          : className + " " + "hover:rounded-[1rem]",
         "rounded-[1.4rem] flex items-center font-bold h-[2.8rem] w-[2.8rem] cursor-pointer transition-all"
       )}
-      onClick={onClick}
     >
       <div className=" flex items-center justify-center w-[2.8rem] h-[2.8rem]">
         {name || children}
@@ -78,7 +77,7 @@ const SidebarItem = ({
           <use xlinkHref="#c" y="100%" />
         </svg>
       </div>
-    </div>
+    </Link>
   );
 };
 

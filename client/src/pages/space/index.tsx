@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import { PanelGroup, Panel, PanelResizeHandle } from "react-resizable-panels";
+import { useSession, signIn, signOut } from "next-auth/react";
+import useSWR from "swr";
+import useSWRMutation from "swr/mutation";
 import {
   DndContext,
   KeyboardSensor,
@@ -21,8 +24,10 @@ import Item from "../../components/Item";
 import TabContainer from "../../components/TabContainer";
 import FilesPanel from "../../components/FilesPanel";
 import Sidebar from "../../components/Sidebar";
+import Login from "../../components/Login";
 import { genUniqueId } from "../../utils/utils";
 import { Tab, TabParents } from "../../types";
+import CreateSpaceModal from "@/components/CreateSpaceModal";
 
 const DEFAULT_TABS = [
   {
@@ -103,7 +108,48 @@ type ActiveTabs = {
   [key: string]: UniqueIdentifier;
 };
 
+const fetcher = (...args) => fetch(...args).then((res) => res.json());
+const fetchWithToken = (url, token) =>
+  fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  }).then((res) => res.json());
+
+async function createSpace(url: string, { arg }: { arg: any }) {
+  console.info(arg);
+  await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(arg),
+  });
+}
+
 export default () => {
+  const { data: session, status } = useSession();
+  // const { data, error, isLoading } = useSWR(
+  //   session ? ["/api/spaces", session.token] : null,
+  //   ([url, token]) => fetchWithToken(url, token)
+  // );
+  const { data: spaces, error, isLoading } = useSWR("/api/spaces", fetcher);
+  const { trigger: createSpaceTrigger } = useSWRMutation(
+    "/api/spaces",
+    createSpace,
+    {
+      onSuccess(data, key, config) {
+        setCreateModalOpen(false);
+      },
+      onError(err, key, config) {
+        console.info(err);
+      },
+    }
+  );
+
+  const [createModalOpen, setCreateModalOpen] = useState(false);
   const [draggedTab, setDraggedTab] = useState<DraggedTab | null>(null);
   const [sidebarTabs, setSidebarTabs] = useState<Tab[]>(DEFAULT_TABS);
   const [tabParents, setTabParents] = useState<TabParents>({});
@@ -503,7 +549,7 @@ export default () => {
       id={draggedTab?.name ?? ""}
       className="bg-gray-200 px-2 py-1 text-sm rounded flex items-center"
     >
-      {draggedTab?.type === "text" ? (
+      {draggedTab?.type === "TEXT" ? (
         <MdTextSnippet className="text-yellow-500 mr-1.5 text-base" />
       ) : (
         <FaPython className="text-cyan-500 mr-1.5 text-base" />
@@ -518,36 +564,58 @@ export default () => {
       </button>
     </Item>
   );
+  if (status === "loading") {
+    return <p>Hang on there...</p>;
+  }
+  if (error) return <div>failed to load</div>;
+  if (isLoading) return <div>loading...</div>;
 
   return (
     <div className="h-screen bg-slate-300">
-      <div className="h-full flex">
-        <Sidebar active={workspace} onClick={(id) => setWorkspace(id)} />
-        <DndContext
-          sensors={sensors}
-          collisionDetection={rectIntersection}
-          onDragOver={handleDragOver}
-          onDragStart={handleDragStart}
-          onDragEnd={handleDragEnd}
-        >
-          <PanelGroup direction="horizontal">
-            <Panel
-              defaultSize={15}
-              maxSize={20}
-              className="bg-slate-100 rounded-l-xl"
-            >
-              <FilesPanel
-                tabs={sidebarTabs}
-                openTab={handleOpenTab}
-                openedTabs={tabParents}
-              />
-            </Panel>
-            <PanelResizeHandle className="w-2 bg-slate-100" />
-            {renderLayout(layout, true)}
-          </PanelGroup>
-          <DragOverlay>{draggedTab ? renderItem : null}</DragOverlay>
-        </DndContext>
-      </div>
+      {status === "authenticated" ? (
+        <div className="h-full flex">
+          <Sidebar
+            spaces={spaces}
+            active={workspace}
+            onClick={(id) => setWorkspace(id)}
+            openCreateModal={() => setCreateModalOpen(true)}
+          />
+          <DndContext
+            sensors={sensors}
+            collisionDetection={rectIntersection}
+            onDragOver={handleDragOver}
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
+          >
+            <PanelGroup direction="horizontal">
+              <Panel
+                defaultSize={15}
+                maxSize={20}
+                className="bg-slate-100 rounded-l-xl"
+              >
+                <FilesPanel
+                  tabs={sidebarTabs}
+                  openTab={handleOpenTab}
+                  openedTabs={tabParents}
+                />
+              </Panel>
+              <PanelResizeHandle className="w-2 bg-slate-100" />
+              {renderLayout(layout, true)}
+            </PanelGroup>
+            <DragOverlay>{draggedTab ? renderItem : null}</DragOverlay>
+          </DndContext>
+
+          <CreateSpaceModal
+            show={createModalOpen}
+            close={() => setCreateModalOpen(false)}
+            createSpace={(spaceData) => createSpaceTrigger(spaceData)}
+          />
+        </div>
+      ) : (
+        <div className="flex items-center justify-center h-full">
+          <Login />
+        </div>
+      )}
     </div>
   );
 };

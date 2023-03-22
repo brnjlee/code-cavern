@@ -20,6 +20,10 @@ module.exports = {
       backgroundColor: {
         "gray-150": "rgb(229 231 235)",
       },
+      transitionDelay: {
+        0: "0ms",
+        100: "100ms",
+      },
     },
   },
   plugins: [],

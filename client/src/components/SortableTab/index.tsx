@@ -30,7 +30,7 @@ const SortableTab = ({
         "select-none rounded flex items-center transition-all"
       )}
     >
-      {type === "text" ? (
+      {type === "TEXT" ? (
         <MdTextSnippet className="text-yellow-500 mr-1.5 text-base" />
       ) : (
         <FaPython className="text-cyan-500 mr-1.5 text-base" />

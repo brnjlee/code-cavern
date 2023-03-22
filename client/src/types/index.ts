@@ -10,6 +10,20 @@ export type Tab = {
   id: UniqueIdentifier;
 };
 
+export type Space = {
+  id: number;
+  name: string;
+  documents: Document[];
+};
+
+export type Document = {
+  id: number;
+  type: string;
+  name: string;
+  data: any;
+  spaceId: number;
+};
+
 export type TabParents = {
   [key: string]: string[];
 };

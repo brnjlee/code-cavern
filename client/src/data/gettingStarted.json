@@ -1,0 +1,7 @@
+[
+  { "type": "heading-one", "children": [{ "text": "Getting Started" }] },
+  {
+    "type": "paragraph",
+    "children": [{ "text": "Welcome to your new workspace!" }]
+  }
+]
