@@ -58,7 +58,7 @@ model Space {
   id            Int       @id @default(autoincrement())
   name          String
   createdAt     DateTime  @default(now())
-  createdBy     User      @relation(fields: [createdById], references: [id])
+  createdBy     User      @relation(fields: [createdById], references: [id], onDelete: Cascade)
   createdById   String
   documents     Document[]
 }
@@ -67,11 +67,18 @@ model Document {
   id            Int       @id @default(autoincrement())
   type          DocumentType @default(TEXT)
   name          String
-  data          Json?
+  data          DocumentData?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-  space         Space     @relation(fields: [spaceId], references: [id])
+  space         Space     @relation(fields: [spaceId], references: [id], onDelete: Cascade)
   spaceId       Int
+}
+
+model DocumentData {
+  id            Int       @id @default(autoincrement())
+  data          Json?
+  document      Document  @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  documentId    Int       @unique
 }
 
 enum DocumentType {

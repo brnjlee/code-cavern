@@ -23,7 +23,6 @@ export default async function handler(
       if (!name) {
         res.status(400).send("Invalid name");
       }
-      console.log(name);
       const newSpace = await prisma.space.create({
         data: {
           name,
@@ -34,8 +33,13 @@ export default async function handler(
         data: {
           type: "TEXT",
           name: "Getting Started",
-          data: gettingStarted,
           spaceId: newSpace.id,
+        },
+      });
+      const firstDocumentData = await prisma.documentData.create({
+        data: {
+          data: gettingStarted,
+          documentId: firstDocument.id,
         },
       });
       res.status(200).json(newSpace);

@@ -574,7 +574,7 @@ export default () => {
     return <p>Hang on there...</p>;
   }
   if (spacesError || documentsError) return <div>failed to load</div>;
-  if (spacesIsLoading || documentsIsLoading) return <div>loading...</div>;
+  if (spacesIsLoading) return <div>loading...</div>;
 
   return (
     <div className="h-screen bg-slate-300">
@@ -598,11 +598,13 @@ export default () => {
                 maxSize={20}
                 className="bg-slate-100 rounded-l-xl"
               >
-                <FilesPanel
-                  tabs={sidebarTabs}
-                  openTab={handleOpenTab}
-                  openedTabs={tabParents}
-                />
+                {!documentsIsLoading ? (
+                  <FilesPanel
+                    tabs={sidebarTabs}
+                    openTab={handleOpenTab}
+                    openedTabs={tabParents}
+                  />
+                ) : null}
               </Panel>
               <PanelResizeHandle className="w-2 bg-slate-100" />
               {renderLayout(layout, true)}

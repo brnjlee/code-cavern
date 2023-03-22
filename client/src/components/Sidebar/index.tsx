@@ -16,12 +16,13 @@ const Sidebar = ({
 }) => {
   const renderSidebarItems = spaces.map(({ id, name }) => (
     <Tooltip key={id} className="mb-2" label={name} direction="right">
-      <SidebarItem
-        id={id}
-        name={name[0]}
-        selected={active === String(id)}
-        className="bg-slate-400 hover:bg-slate-100 hover:text-slate-600 text-white"
-      />
+      <Link href={`/space/${id}`}>
+        <SidebarItem
+          name={name[0]}
+          selected={active === String(id)}
+          className="bg-slate-400 hover:bg-slate-100 hover:text-slate-600 text-white"
+        />
+      </Link>
     </Tooltip>
   ));
   return (
@@ -41,21 +42,21 @@ const Sidebar = ({
 };
 
 const SidebarItem = ({
-  id,
   name,
   selected,
   children,
   className,
+  onClick,
 }: {
-  id: string;
   name?: string;
   selected: boolean;
   children?: React.ReactNode;
   className?: string;
+  onClick?: () => void;
 }) => {
   return (
-    <Link
-      href={`/space/${id}`}
+    <div
+      onClick={onClick}
       className={clsx(
         selected
           ? "rounded-l-[1.4rem] rounded-r-none bg-slate-100 w-full"
@@ -77,7 +78,7 @@ const SidebarItem = ({
           <use xlinkHref="#c" y="100%" />
         </svg>
       </div>
-    </Link>
+    </div>
   );
 };
 
