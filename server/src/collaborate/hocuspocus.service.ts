@@ -44,23 +44,26 @@ export class HocusPocusService {
                 if (!res) {
                   reject('Document data not found');
                 }
-                const ydoc = new Y.Doc();
-                // Y.applyUpdate(ydoc, res.data);
-                // resolve(Y.encodeStateAsUpdate(ydoc));
-                console.log(JsonToArray(res.data));
                 resolve(JsonToArray(res.data));
               });
           });
         },
         store: async ({ documentName, state }) => {
           const ydoc = new Y.Doc();
+          console.log('store this document');
           Y.applyUpdate(ydoc, state);
-          prisma.documentData.update({
-            where: { documentId: parseInt(documentName) },
-            data: {
-              data: Y.encodeStateAsUpdate(ydoc) as any,
-            },
-          });
+          prisma.documentData
+            .update({
+              where: { documentId: parseInt(documentName) },
+              data: {
+                data: Y.encodeStateAsUpdate(ydoc) as any,
+              },
+            })
+            .then((res) => {
+              if (!res) {
+                console.log('Document failed to save');
+              }
+            });
         },
       }),
     ],

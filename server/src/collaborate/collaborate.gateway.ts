@@ -44,8 +44,8 @@ export class CollaborateGateway
     this.server.emit('users', this.users);
     const context = {
       user: {
-        id: 1234,
-        name: 'Jane',
+        id: user.id,
+        name: user.name,
       },
     };
     console.log('connect');

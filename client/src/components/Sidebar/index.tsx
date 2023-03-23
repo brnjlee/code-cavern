@@ -1,7 +1,8 @@
 import React from "react";
 import clsx from "clsx";
-import { FiPlus } from "react-icons/fi";
+import { FiPlus, FiLogOut } from "react-icons/fi";
 import Link from "next/link";
+import { signOut } from "next-auth/react";
 
 import Tooltip from "../Tooltip";
 
@@ -35,6 +36,19 @@ const Sidebar = ({
           className="bg-slate-100 hover:bg-green-600 text-green-600 hover:text-slate-100"
         >
           <FiPlus className="h-6 w-6 " />
+        </SidebarItem>
+      </Tooltip>
+      <Tooltip className="mb-2" label={"Sign out"} direction="right">
+        <SidebarItem
+          onClick={() =>
+            signOut({
+              callbackUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/login`,
+            })
+          }
+          selected={false}
+          className="bg-slate-100 hover:bg-green-600 text-green-600 hover:text-slate-100"
+        >
+          <FiLogOut className="h-6 w-6 " />
         </SidebarItem>
       </Tooltip>
     </div>
