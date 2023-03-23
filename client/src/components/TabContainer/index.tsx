@@ -22,7 +22,7 @@ type TabContainer = {
   setActiveItemId: (itemId: UniqueIdentifier) => void;
   containerId: string;
   hoveringOver: UniqueIdentifier;
-  closeTab: (itemId: string, tabIdx: number) => void;
+  closeTab: (itemId: UniqueIdentifier, tabIdx: number) => void;
 };
 
 const TabContainer = ({
@@ -56,7 +56,12 @@ const TabContainer = ({
     },
   ];
   const activeTab = useCallback(() => {
-    return tabs.find((t) => t.itemId === activeItemId);
+    return (
+      tabs.find((t) => t.itemId === activeItemId) ?? {
+        type: "TEXT",
+        itemId: "-1",
+      }
+    );
   }, [activeItemId, tabs]);
 
   const renderTabs = tabs.map(({ type, name, id, itemId }, tabIdx) => (
@@ -106,9 +111,9 @@ const TabContainer = ({
   const renderContent = () => {
     switch (activeTab()?.type) {
       case "CODE":
-        return <CodeEditor />;
+        return <CodeEditor id={activeTab()?.itemId} />;
       case "TEXT":
-        return <TextEditor />;
+        return <TextEditor id={activeTab()?.itemId} />;
     }
   };
 

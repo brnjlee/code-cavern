@@ -1,8 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { PrismaClient } from "@prisma/client";
-import { getToken } from "next-auth/jwt";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]";
+import * as Y from "yjs";
+import { slateNodesToInsertDelta } from "@slate-yjs/core";
 
 import gettingStarted from "../../../data/gettingStarted.json";
 
@@ -13,8 +14,6 @@ export default async function handler(
 ) {
   // console.log(req);
   const session = await getServerSession(req, res, authOptions);
-  console.log(session);
-  const token = await getToken({ req });
   if (session) {
     if (req.method === "GET") {
       const spaces = await prisma.space.findMany({
@@ -40,9 +39,13 @@ export default async function handler(
           spaceId: newSpace.id,
         },
       });
+      const yDoc = new Y.Doc();
+      const sharedType = yDoc.get("content", Y.XmlText);
+      sharedType.applyDelta(slateNodesToInsertDelta(gettingStarted as any));
+
       const firstDocumentData = await prisma.documentData.create({
         data: {
-          data: gettingStarted,
+          data: Y.encodeStateAsUpdate(yDoc) as any,
           documentId: firstDocument.id,
         },
       });

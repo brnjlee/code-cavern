@@ -9,6 +9,7 @@ import dynamic from "next/dynamic";
 import { ConnectionToggle } from "../../components/ConnectionToggle";
 import setMode from "./languageMapper";
 import { randomCursorData } from "@/utils/utils";
+import { UniqueIdentifier } from "@dnd-kit/core";
 
 let yCodemirror: any = null;
 if (typeof window !== "undefined" && typeof window.navigator !== "undefined") {
@@ -23,7 +24,7 @@ const Uncontrolled = dynamic(
 );
 
 let provider: any = null;
-const CodeEditor = ({ id }: { id: string }) => {
+const CodeEditor = ({ id }: { id: UniqueIdentifier }) => {
   const [EditorRef, setEditorRef] = useState(null);
   const [code, setCode] = useState("");
   const [connected, setConnected] = useState(false);

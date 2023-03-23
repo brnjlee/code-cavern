@@ -32,6 +32,7 @@ import { CommandList } from "../CommandList";
 import { addAlpha, randomCursorData } from "../../utils/utils";
 import { CursorData } from "../../types";
 import * as Y from "yjs";
+import { UniqueIdentifier } from "@dnd-kit/core";
 
 const COMMAND_KEY = "/";
 type PortalProps = { children?: ReactNode };
@@ -82,7 +83,7 @@ const renderDecoratedLeaf = (props: RenderLeafProps) => {
 
 let provider: any = undefined;
 let editor: any = undefined;
-export default () => {
+const TextEditor = ({ id }: { id: UniqueIdentifier }) => {
   const [value, setValue] = useState<Descendant[]>([]);
   const [connected, setConnected] = useState(false);
   const [target, setTarget] = useState<Range | null>();
@@ -94,7 +95,7 @@ export default () => {
   useEffect(() => {
     provider = new HocuspocusProvider({
       url: "ws://localhost:8080/collaborate",
-      parameters: { id: "1" },
+      parameters: { id },
       name: "",
       onConnect: () => setConnected(true),
       onDisconnect: () => setConnected(false),
@@ -233,3 +234,5 @@ export default () => {
     </div>
   );
 };
+
+export default TextEditor;

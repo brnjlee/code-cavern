@@ -20,6 +20,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@hocuspocus/extension-database": "^1.1.1",
     "@hocuspocus/extension-logger": "^1.1.1",
     "@hocuspocus/server": "^1.1.1",
     "@nestjs/common": "^9.0.0",

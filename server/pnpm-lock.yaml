@@ -1,6 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@hocuspocus/extension-database': ^1.1.1
   '@hocuspocus/extension-logger': ^1.1.1
   '@hocuspocus/server': ^1.1.1
   '@nestjs/cli': ^9.0.0
@@ -56,6 +57,7 @@ specifiers:
   yjs: ^13.5.51
 
 dependencies:
+  '@hocuspocus/extension-database': 1.1.1_7ihrd6a5hrnbis2lbumtphovpi
   '@hocuspocus/extension-logger': 1.1.1_7ihrd6a5hrnbis2lbumtphovpi
   '@hocuspocus/server': 1.1.1_7ihrd6a5hrnbis2lbumtphovpi
   '@nestjs/common': 9.3.10_mnr6j2del53muneqly5h4y27ai
@@ -614,6 +616,19 @@ packages:
     resolution: {integrity: sha512-bCzj/EkUiWi4VWRefJq6hoAYgWthRscBt65zIee0FR7X+xbtkYSGGtyA9A+e/YPqb+uynbw721WSgxnkpW7XmQ==}
     dependencies:
       lib0: 0.2.72
+    dev: false
+
+  /@hocuspocus/extension-database/1.1.1_7ihrd6a5hrnbis2lbumtphovpi:
+    resolution: {integrity: sha512-6p+Gd7VYMeOBXiwKS5vd2gmuMtDuRuzjmGlNu1h6srE6EOjVqZwAdU0MfAJzl1/sGA1PDyakiEuRs4mEWJvhiQ==}
+    peerDependencies:
+      yjs: ^13.5.29
+    dependencies:
+      '@hocuspocus/server': 1.1.1_7ihrd6a5hrnbis2lbumtphovpi
+      yjs: 13.5.51
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+      - y-protocols
     dev: false
 
   /@hocuspocus/extension-logger/1.1.1_7ihrd6a5hrnbis2lbumtphovpi:
