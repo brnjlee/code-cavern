@@ -124,7 +124,6 @@ async function createSpace(url: string, { arg }: { arg: any }) {
 
 export default () => {
   const { data: session, status } = useSession();
-  console.log(session);
   // const { data, error, isLoading } = useSWR(
   //   session ? ["/api/spaces", session.token] : null,
   //   ([url, token]) => fetchWithToken(url, token)

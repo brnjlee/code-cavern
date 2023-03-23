@@ -20,14 +20,21 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@hocuspocus/extension-logger": "^1.1.1",
+    "@hocuspocus/server": "^1.1.1",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.3.1",
     "@nestjs/core": "^9.0.0",
     "@nestjs/jwt": "^10.0.2",
     "@nestjs/passport": "^9.0.3",
     "@nestjs/platform-express": "^9.0.0",
+    "@nestjs/platform-socket.io": "^9.3.12",
+    "@nestjs/platform-ws": "^9.3.12",
     "@nestjs/swagger": "^6.2.1",
+    "@nestjs/websockets": "^9.3.12",
     "@prisma/client": "4.11.0",
+    "@slate-yjs/core": "^0.3.1",
+    "debounce": "^1.2.1",
     "express": "^4.18.2",
     "passport": "^0.6.0",
     "passport-google-oauth2": "^0.2.0",
@@ -35,9 +42,12 @@
     "passport-local": "^1.0.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0",
+    "slate": "^0.91.4",
     "swagger-ui-express": "^4.6.2",
     "unique-username-generator": "^1.1.3",
-    "webpack": "^5.76.2"
+    "webpack": "^5.76.2",
+    "y-protocols": "^1.0.5",
+    "yjs": "^13.5.51"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",

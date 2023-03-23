@@ -95,7 +95,6 @@ export default () => {
     provider = new HocuspocusProvider({
       url: "ws://localhost:8080/collaborate",
       parameters: { id: "1" },
-      token: "token_placeholder",
       name: "",
       onConnect: () => setConnected(true),
       onDisconnect: () => setConnected(false),
@@ -121,13 +120,12 @@ export default () => {
         )
       )
     );
-    // provider.connect();
+    provider.connect();
     return () => {
       Transforms.deselect(editor);
-      // if (provider) {
-      // 	console.log('unload')
-      // 	provider.disconnect();
-      // }
+      if (provider) {
+        provider.disconnect();
+      }
     };
   }, []);
 
@@ -197,14 +195,14 @@ export default () => {
     provider.connect();
   }, [provider, connected]);
 
-  useEffect(() => {
-    provider.connect();
-    console.log("connect");
-    return () => {
-      console.log("disconnect");
-      provider.disconnect();
-    };
-  }, [provider]);
+  // useEffect(() => {
+  //   provider.connect();
+  //   console.log("connect");
+  //   return () => {
+  //     console.log("disconnect");
+  //     provider.disconnect();
+  //   };
+  // }, [provider]);
   useEffect(() => {
     YjsEditor.connect(editor);
     return () => YjsEditor.disconnect(editor);
@@ -216,7 +214,7 @@ export default () => {
       className="text-editor bg-white rounded-b flex h-full justify-center overflow-y-auto"
     >
       {editor && (
-        <div className="px-5">
+        <div className="px-5 w-full max-w-5xl">
           <Slate value={value} onChange={onChangeHandler} editor={editor}>
             {target && (
               <CommandList

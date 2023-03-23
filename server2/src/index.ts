@@ -9,9 +9,8 @@ import { debounce } from "debounce";
 import initialValue from "./data/initialValue.json";
 
 let debounced: any;
-const PORT: number = 1234;
 const server = Server.configure({
-  port: PORT,
+  port: parseInt(process.env.PORT || "8080"),
   extensions: [
     new Logger(),
     new SQLite({

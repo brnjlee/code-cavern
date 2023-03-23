@@ -6,11 +6,17 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { generateFromEmail } from 'unique-username-generator';
+import { ConfigService } from '@nestjs/config';
 import { RegisterUserDto } from './dtos/auth.dto';
+import { parseCookies } from 'src/utils';
 
 @Injectable()
 export class AuthService {
-  constructor(private jwtService: JwtService, private prisma: PrismaService) {}
+  constructor(
+    private readonly configService: ConfigService,
+    private jwtService: JwtService,
+    private prisma: PrismaService,
+  ) {}
 
   generateJwt(payload) {
     return this.jwtService.sign(payload);
@@ -55,5 +61,19 @@ export class AuthService {
     }
 
     return user;
+  }
+
+  async validateJWT(req) {
+    if (!req?.headers?.cookie) {
+      return null;
+    }
+    const cookies = parseCookies(req.headers.cookie);
+    const token = cookies['next-auth.session-token'];
+    return this.jwtService.verify(token, {
+      secret: this.configService.get('jwt.secret'),
+    });
+    // const user = await this.prisma.user.findUnique({
+    //   where: { email: payload.email },
+    // });
   }
 }
