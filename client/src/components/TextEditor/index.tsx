@@ -90,9 +90,12 @@ export default () => {
   const [command, setCommand] = useState("");
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // Token parameter must exist in order to trigger onAuthenicate
   useEffect(() => {
     provider = new HocuspocusProvider({
-      url: "ws://localhost:1234/collaboration/1",
+      url: "ws://localhost:8080/collaborate",
+      parameters: { id: "1" },
+      token: "token_placeholder",
       name: "",
       onConnect: () => setConnected(true),
       onDisconnect: () => setConnected(false),

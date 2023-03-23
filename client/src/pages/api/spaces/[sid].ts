@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { PrismaClient } from "@prisma/client";
-import { getToken } from "next-auth/jwt";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "../auth/[...nextauth]";
 
 const prisma = new PrismaClient();
 export default async function handler(
@@ -9,8 +10,8 @@ export default async function handler(
 ) {
   const { sid } = req.query;
   const id = parseInt(sid);
-  const token = await getToken({ req });
-  if (token) {
+  const session = await getServerSession(req, res, authOptions);
+  if (session) {
     if (req.method === "GET") {
       const documents = await prisma.document.findMany({
         where: { spaceId: id },

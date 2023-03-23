@@ -1,6 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { PrismaClient } from "@prisma/client";
 import { getToken } from "next-auth/jwt";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "../auth/[...nextauth]";
 
 import gettingStarted from "../../../data/gettingStarted.json";
 
@@ -10,11 +12,13 @@ export default async function handler(
   res: NextApiResponse
 ) {
   // console.log(req);
+  const session = await getServerSession(req, res, authOptions);
+  console.log(session);
   const token = await getToken({ req });
-  if (token) {
+  if (session) {
     if (req.method === "GET") {
       const spaces = await prisma.space.findMany({
-        where: { createdById: token.sub },
+        where: { createdById: session.sub },
       });
       res.status(200).json(spaces);
     } else {
@@ -26,7 +30,7 @@ export default async function handler(
       const newSpace = await prisma.space.create({
         data: {
           name,
-          createdById: token.sub,
+          createdById: session.sub,
         },
       });
       const firstDocument = await prisma.document.create({

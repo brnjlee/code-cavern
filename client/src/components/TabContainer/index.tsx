@@ -105,9 +105,9 @@ const TabContainer = ({
 
   const renderContent = () => {
     switch (activeTab()?.type) {
-      case "code":
+      case "CODE":
         return <CodeEditor />;
-      case "text":
+      case "TEXT":
         return <TextEditor />;
     }
   };
@@ -119,6 +119,7 @@ const TabContainer = ({
           {renderTabs}
           <button
             type="button"
+            onClick={() => {}}
             className={clsx(
               "transition-all text-slate-400 h-6 w-6 ml-1 flex justify-center items-center hover:text-slate-600 hover:bg-slate-200 rounded-lg p-[3px]"
             )}
