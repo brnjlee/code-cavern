@@ -41,7 +41,6 @@ const CodeEditor = ({ id }: { id: UniqueIdentifier }) => {
       const yUndoManager = new Y.UndoManager(yText);
       const awareness = provider.awareness;
       const color = RandomColor();
-
       awareness.setLocalStateField("user", randomCursorData());
       const getBinding = new yCodemirror.CodemirrorBinding(
         yText,
@@ -51,7 +50,6 @@ const CodeEditor = ({ id }: { id: UniqueIdentifier }) => {
           yUndoManager,
         }
       );
-
       provider.connect();
       setConnected(true);
       return () => {

@@ -13,10 +13,13 @@ export default async function handler(
   const session = await getServerSession(req, res, authOptions);
   if (session) {
     if (req.method === "GET") {
-      const documents = await prisma.document.findMany({
-        where: { spaceId: id },
+      const space = await prisma.space.findFirst({
+        where: { id },
+        include: {
+          documents: true,
+        },
       });
-      res.status(200).json(documents);
+      res.status(200).json(space);
     } else {
     }
   } else {

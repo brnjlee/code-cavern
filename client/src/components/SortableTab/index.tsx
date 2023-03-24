@@ -2,6 +2,7 @@ import React from "react";
 import SortableItem from "../SortableItem";
 import { FaPython } from "react-icons/fa";
 import { MdTextSnippet } from "react-icons/md";
+import { BsFileEarmarkTextFill } from "react-icons/bs";
 import { UniqueIdentifier } from "@dnd-kit/core";
 import clsx from "clsx";
 import { Tab } from "../../types";
@@ -31,7 +32,7 @@ const SortableTab = ({
       )}
     >
       {type === "TEXT" ? (
-        <MdTextSnippet className="text-yellow-500 mr-1.5 text-base" />
+        <BsFileEarmarkTextFill className="text-yellow-500 mr-1.5 text-base" />
       ) : (
         <FaPython className="text-cyan-500 mr-1.5 text-base" />
       )}

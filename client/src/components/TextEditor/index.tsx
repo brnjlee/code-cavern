@@ -228,7 +228,7 @@ const TextEditor = ({ id }: { id: UniqueIdentifier }) => {
             <DecoratedEditable />
             {/* </RemoteCursorOverlay> */}
           </Slate>
-          <ConnectionToggle connected={connected} onClick={toggleConnection} />
+          {/* <ConnectionToggle connected={connected} onClick={toggleConnection} /> */}
         </div>
       )}
     </div>

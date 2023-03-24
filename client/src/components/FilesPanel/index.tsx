@@ -1,36 +1,63 @@
-import React from "react";
+import React, { useState } from "react";
 import { Tab } from "../../types";
 import SortableTab from "../SortableTab";
 import { TabParents } from "../../types";
+import { FiPlus } from "react-icons/fi";
+import CreateDocumentModal from "../CreateDocumentModal";
 type FilesPanel = {
   tabs: Tab[];
   openTab: (tab: Tab) => void;
   openedTabs: TabParents;
+  createDocument: (value: string) => void;
+  showCreateDocumentModal: boolean;
+  setShowCreateDocumentModal: (state: boolean) => void;
 };
-const FilesPanel = ({ tabs, openTab, openedTabs }: FilesPanel) => {
-  const renderTabs = tabs
-    .sort((a, b) => (a.name > b.name ? 1 : -1))
-    .map(({ type, name, id, itemId }) => (
-      <SortableTab
-        key={id}
-        id={id}
-        itemId={itemId}
-        name={name}
-        type={type}
-        disabled={false}
-        parent={"sidebar"}
-        onClick={() => openTab({ type, name, id, itemId })}
-        className=" group hover:bg-gray-200 pl-2 pr-1 py-1 text-base"
-      >
-        {/* {openedTabs[itemId]?.length ? (
+const FilesPanel = ({
+  tabs,
+  openTab,
+  openedTabs,
+  createDocument,
+  showCreateDocumentModal,
+  setShowCreateDocumentModal,
+}: FilesPanel) => {
+  const renderTabs = tabs.map(({ type, name, id, itemId }) => (
+    <SortableTab
+      key={id}
+      id={id}
+      itemId={itemId}
+      name={name}
+      type={type}
+      disabled={false}
+      parent={"sidebar"}
+      onClick={() => openTab({ type, name, id, itemId })}
+      className=" group hover:bg-gray-200 pl-2 pr-1 py-1 text-base"
+    >
+      {/* {openedTabs[itemId]?.length ? (
           <div className="absolute left-3 w-1 h-1 ml-auto bg-slate-300 rounded-[2rem] group-hover:w-2 transition-all" />
         ) : null} */}
-      </SortableTab>
-    ));
+    </SortableTab>
+  ));
   return (
-    <div className="h-full rounded p-5 relative">
-      <h3 className="font-bold mb-2 text-slate-600">Files</h3>
-      {renderTabs}
+    <div className="h-full rounded p-5 flex flex-col relative">
+      <div className="h-full">
+        <h3 className="font-bold mb-2 text-slate-600">Files</h3>
+        {renderTabs}
+      </div>
+      <div className="h-10 flex items-center justify-center">
+        <button
+          type="button"
+          onClick={() => setShowCreateDocumentModal(true)}
+          className="transition-all flex items-center  justify-center w-full font-semibold border border-slate-200 p-1 bg-white hover:bg-slate-200 rounded-lg text-slate-800 hover:text-slate-900"
+        >
+          <FiPlus className="" />
+          New Document
+        </button>
+        <CreateDocumentModal
+          show={showCreateDocumentModal}
+          onClickOutside={() => setShowCreateDocumentModal(false)}
+          createDocument={createDocument}
+        />
+      </div>
     </div>
   );
 };

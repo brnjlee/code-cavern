@@ -29,6 +29,7 @@ import Login from "../../components/Login";
 import { curateDocuments, genUniqueId } from "../../utils/utils";
 import { Tab, TabParents } from "../../types";
 import CreateSpaceModal from "@/components/CreateSpaceModal";
+import SpacePanel from "@/components/SpacePanel";
 
 const DEFAULT_TABS = [
   {
@@ -122,6 +123,15 @@ async function createSpace(url: string, { arg }: { arg: any }) {
   });
 }
 
+const createDocument = (url: string, { arg }: { arg: any }) =>
+  fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(arg),
+  }).then((res) => res.json());
+
 export default () => {
   const { data: session, status } = useSession();
   // const { data, error, isLoading } = useSWR(
@@ -135,12 +145,13 @@ export default () => {
     isLoading: spacesIsLoading,
   } = useSWR("/api/spaces", fetcher);
   const {
-    data: docs,
+    data: space,
     error: documentsError,
     isLoading: documentsIsLoading,
   } = useSWR(sid ? `/api/spaces/${sid}` : null, fetcher, {
-    onSuccess(documents, key, config) {
-      setSidebarTabs(curateDocuments(documents));
+    onSuccess(space, key, config) {
+      setSidebarTabs(curateDocuments(space.documents));
+      setActiveSpaceName(space.name);
     },
   });
   const { trigger: createSpaceTrigger } = useSWRMutation(
@@ -148,7 +159,20 @@ export default () => {
     createSpace,
     {
       onSuccess(data, key, config) {
-        setCreateModalOpen(false);
+        setShowCreateModal(false);
+      },
+      onError(err, key, config) {
+        console.info(err);
+      },
+    }
+  );
+  const { trigger: createDocumentTrigger } = useSWRMutation(
+    "/api/documents",
+    createDocument,
+    {
+      onSuccess(document, key, config) {
+        setShowCreateDocumentModal(false);
+        setSidebarTabs((prev) => [...prev, ...curateDocuments([document])]);
       },
       onError(err, key, config) {
         console.info(err);
@@ -156,11 +180,13 @@ export default () => {
     }
   );
 
-  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showCreateDocumentModal, setShowCreateDocumentModal] = useState(false);
   const [draggedTab, setDraggedTab] = useState<DraggedTab | null>(null);
   const [sidebarTabs, setSidebarTabs] = useState<Tab[]>(DEFAULT_TABS);
   const [tabParents, setTabParents] = useState<TabParents>({});
   const [activeTabs, setActiveTabs] = useState<ActiveTabs>({});
+  const [activeSpaceName, setActiveSpaceName] = useState("");
   const [hoveringOver, setHoveringOver] = useState<HoveringOver>({
     containerId: "",
     hover: "",
@@ -217,7 +243,7 @@ export default () => {
   const renderLayout = (root: Panel, isRoot: boolean) => {
     if (root.type === "panel") {
       return (
-        <Panel className="bg-slate-100 shadow-lg">
+        <Panel className="bg-slate-100 shadow-sm">
           <TabContainer
             key={root.id}
             tabs={root.tabs || []}
@@ -239,8 +265,12 @@ export default () => {
     const resizeHandleClass = root.type === "horizontal" ? "w-2" : "h-2";
     return (
       <Panel
-        className={clsx(isRoot && "py-5 pr-5", "bg-slate-100 overflow-visible")}
+        className={clsx(
+          isRoot && "pt-12 pb-4 pr-4",
+          "bg-slate-100 overflow-visible relative"
+        )}
       >
+        {isRoot ? <SpacePanel name={activeSpaceName} /> : null}
         <PanelGroup direction={root.type} className="overflow-visible">
           {root.panels?.map((child: Panel, i: number) => (
             <>
@@ -573,7 +603,7 @@ export default () => {
   if (status === "loading") {
     return <p>Hang on there...</p>;
   }
-  if (spacesError || documentsError) return <div>failed to load</div>;
+  if (spacesError) return <div>failed to load</div>;
   if (spacesIsLoading) return <div>loading...</div>;
 
   return (
@@ -583,7 +613,7 @@ export default () => {
           <Sidebar
             spaces={spaces}
             active={sid}
-            openCreateModal={() => setCreateModalOpen(true)}
+            openCreateModal={() => setShowCreateModal(true)}
           />
           <DndContext
             sensors={sensors}
@@ -592,29 +622,40 @@ export default () => {
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
           >
-            <PanelGroup direction="horizontal">
-              <Panel
-                defaultSize={15}
-                maxSize={20}
-                className="bg-slate-100 rounded-l-xl"
-              >
-                {!documentsIsLoading ? (
-                  <FilesPanel
-                    tabs={sidebarTabs}
-                    openTab={handleOpenTab}
-                    openedTabs={tabParents}
-                  />
-                ) : null}
-              </Panel>
-              <PanelResizeHandle className="w-2 bg-slate-100" />
-              {renderLayout(layout, true)}
-            </PanelGroup>
+            {!documentsError ? (
+              <PanelGroup direction="horizontal">
+                <Panel
+                  defaultSize={15}
+                  maxSize={20}
+                  className="bg-slate-100 rounded-l-xl"
+                >
+                  {!documentsIsLoading ? (
+                    <FilesPanel
+                      tabs={sidebarTabs}
+                      openTab={handleOpenTab}
+                      openedTabs={tabParents}
+                      showCreateDocumentModal={showCreateDocumentModal}
+                      setShowCreateDocumentModal={(state) =>
+                        setShowCreateDocumentModal(state)
+                      }
+                      createDocument={(value) =>
+                        createDocumentTrigger({ type: value, spaceId: sid })
+                      }
+                    />
+                  ) : null}
+                </Panel>
+                <PanelResizeHandle className="w-2 bg-slate-100" />
+                {renderLayout(layout, true)}
+              </PanelGroup>
+            ) : (
+              <div> Space is not found</div>
+            )}
             <DragOverlay>{draggedTab ? renderItem : null}</DragOverlay>
           </DndContext>
 
           <CreateSpaceModal
-            show={createModalOpen}
-            close={() => setCreateModalOpen(false)}
+            show={showCreateModal}
+            close={() => setShowCreateModal(false)}
             createSpace={(spaceData) => createSpaceTrigger(spaceData)}
           />
         </div>

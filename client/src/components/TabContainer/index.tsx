@@ -58,7 +58,7 @@ const TabContainer = ({
   const activeTab = useCallback(() => {
     return (
       tabs.find((t) => t.itemId === activeItemId) ?? {
-        type: "TEXT",
+        type: "NONE",
         itemId: "-1",
       }
     );
@@ -118,7 +118,7 @@ const TabContainer = ({
   };
 
   return (
-    <div className="relative h-full shadow rounded flex flex-col">
+    <div className="relative h-full border border-slate-200 rounded flex flex-col">
       <SortableContext items={tabs} strategy={horizontalListSortingStrategy}>
         <div className="bg-white h-10 flex items-center rounded-t">
           {renderTabs}

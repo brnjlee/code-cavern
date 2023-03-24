@@ -236,7 +236,7 @@ export const CommandList = ({
       }}
       className={clsx(
         mounted ? "scale-1 opacity-100" : "scale-0 opacity-0",
-        "command-list-open w-150 max-h-80 overflow-y-scroll transition-scale origin-top-left absolute p-1 z-10 bg-white rounded shadow-3xl border border-gray-200 "
+        "command-list-open w-150 max-h-80 overflow-y-scroll transition-scale origin-top-left absolute p-1 z-10 bg-white rounded shadow-3xl border border-slate-200 "
       )}
     >
       {commands.length ? (
