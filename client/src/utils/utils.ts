@@ -8,14 +8,14 @@ const {
   name: { firstName, lastName },
 } = faker;
 
-export function randomCursorData(): CursorData {
+export function cursorData(name: string): CursorData {
   return {
     color: randomColor({
       luminosity: "dark",
       alpha: 1,
       format: "hex",
     }),
-    name: `${firstName()} ${lastName()}`,
+    name,
   };
 }
 

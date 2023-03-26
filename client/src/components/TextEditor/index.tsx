@@ -29,8 +29,8 @@ import { RenderLeafProps, Slate, withReact } from "slate-react";
 import { withListsReact, onKeyDown } from "@prezly/slate-lists";
 import * as Y from "yjs";
 import { UniqueIdentifier } from "@dnd-kit/core";
-import useSWR from "swr";
-import { slateNodesToInsertDelta } from "@slate-yjs/core";
+import useSWRMutation from "swr/mutation";
+import { useSession } from "next-auth/react";
 
 import { FormatToolbar } from "../FormatToolbar";
 import { withDefaultBreak } from "@/plugins/withDefaultBreak";
@@ -41,10 +41,10 @@ import { Leaf } from "../Leaf";
 import { ConnectionToggle } from "../ConnectionToggle";
 import { RemoteCursorOverlay } from "../RemoteCursorOverlay";
 import { CommandList } from "../CommandList";
-import { addAlpha, randomCursorData, JsonToArray } from "@/utils/utils";
+import { addAlpha, cursorData } from "@/utils/utils";
 import { CursorData, ElementType } from "@/types";
-import { fetcher } from "@/requests";
-import gettingStarted from "@/data/gettingStarted.json";
+import { updateDocument } from "@/requests";
+import useDebounce from "@/hooks/use-debounce";
 
 const COMMAND_KEY = "/";
 type PortalProps = { children?: ReactNode };
@@ -94,14 +94,26 @@ const renderDecoratedLeaf = (props: RenderLeafProps) => {
 };
 
 const TextEditor = ({ id, name }: { id: UniqueIdentifier; name: string }) => {
+  const { data: session, status } = useSession();
   const [title, setTitle] = useState(name);
+  const debouncedTitle = useDebounce(title, 1000);
   const [value, setValue] = useState<Descendant[]>([]);
   const [connected, setConnected] = useState(false);
   const [target, setTarget] = useState<Range | null>();
   const containerRef = useRef<HTMLDivElement>(null);
+  const { trigger: updateDocumentTrigger } = useSWRMutation(
+    `/api/documents/${id}`,
+    updateDocument,
+    {
+      onSuccess(data, key, config) {},
+      onError(err, key, config) {
+        console.info(err);
+      },
+    }
+  );
   useEffect(() => {
-    console.log("trigger");
-  }, [title]);
+    updateDocumentTrigger({ name: debouncedTitle });
+  }, [debouncedTitle]);
 
   const provider = useMemo(
     () =>
@@ -120,6 +132,7 @@ const TextEditor = ({ id, name }: { id: UniqueIdentifier; name: string }) => {
   );
 
   const editor = useMemo(() => {
+    console.log(session);
     const sharedType = provider.document.get("content", Y.XmlText) as Y.XmlText;
     return withListsReact(
       withListsPlugin(
@@ -131,7 +144,7 @@ const TextEditor = ({ id, name }: { id: UniqueIdentifier; name: string }) => {
                   withYjs(createEditor(), sharedType, { autoConnect: false }),
                   provider.awareness,
                   {
-                    data: randomCursorData(),
+                    data: cursorData(session?.user?.name || "Unknown user"),
                   }
                 )
               )
@@ -143,7 +156,6 @@ const TextEditor = ({ id, name }: { id: UniqueIdentifier; name: string }) => {
   }, [provider.document]);
 
   const onChangeHandler = (value: Descendant[]) => {
-    console.log(value);
     setValue(value);
     const { selection } = editor;
     const [titleBlock] = Editor.nodes(editor, {
@@ -156,7 +168,7 @@ const TextEditor = ({ id, name }: { id: UniqueIdentifier; name: string }) => {
     // // console.log(selection)
     // // if (selection && selection.anchor)
     if (selection && Range.isCollapsed(selection) && titleBlock) {
-      console.log("hello");
+      setTitle(titleBlock[0].children[0].text);
     }
     //   console.log('test')
     //   const [start] = Range.edges(selection)

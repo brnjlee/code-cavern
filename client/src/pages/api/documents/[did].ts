@@ -20,7 +20,16 @@ export default async function handler(
         },
       });
       res.status(200).json(document);
-    } else {
+    } else if (req.method === "PATCH") {
+      const updateDocument = await prisma.document.update({
+        where: {
+          id,
+        },
+        data: {
+          name: req.body.name,
+        },
+      });
+      res.status(200).json(updateDocument);
     }
   } else {
     res.status(401).send("Unauthorized");

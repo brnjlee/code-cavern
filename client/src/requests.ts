@@ -19,3 +19,12 @@ export const createDocument = (url: string, { arg }: { arg: any }) =>
     },
     body: JSON.stringify(arg),
   }).then((res) => res.json());
+
+export const updateDocument = (url: string, { arg }: { arg: any }) =>
+  fetch(url, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(arg),
+  }).then((res) => res.json());
