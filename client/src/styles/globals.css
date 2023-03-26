@@ -21,7 +21,7 @@ body {
 }
 
 .text-editor:has(.command-list-open) {
-  overflow-y: hidden;
+  overflow-y: hidden !important;
   padding-right: 10px;
   /* position: fixed; */
 }
@@ -99,4 +99,26 @@ ol ol {
 }
 .CodeMirror {
   width: 100% !important;
+}
+
+.element span:has(> br)::before {
+  opacity: 0.2;
+  position: absolute;
+  cursor: text;
+}
+
+h1.element span:has(> br)::before {
+  content: "Heading 1";
+}
+
+h2.element span:has(> br)::before {
+  content: "Heading 2";
+}
+
+h3.element span:has(> br)::before {
+  content: "Heading 3";
+}
+
+.title.element span:has(> br)::before {
+  content: "Untitled";
 }

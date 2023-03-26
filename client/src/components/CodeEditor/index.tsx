@@ -60,7 +60,7 @@ const CodeEditor = ({ id }: { id: UniqueIdentifier }) => {
         }
       };
     }
-  }, [EditorRef]);
+  }, [EditorRef, id]);
   // const toggleConnection = useCallback(() => {
   //   if (connected) {
   //     setConnected(false);

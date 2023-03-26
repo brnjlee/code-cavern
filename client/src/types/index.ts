@@ -42,6 +42,7 @@ export type CustomText = {
 };
 
 export enum ElementType {
+  TITLE = "title",
   PARAGRAPH = "paragraph",
   INLINE_CODE = "inline-code",
   HEADING_ONE = "heading-one",
@@ -54,6 +55,10 @@ export enum ElementType {
   BLOCK_QUOTE = "block-quote",
 }
 
+export type Title = {
+  type: ElementType.TITLE;
+  children: Descendant[];
+};
 export type Paragraph = {
   type: ElementType.PARAGRAPH;
   children: Descendant[];
@@ -105,6 +110,7 @@ export type BlockQuote = {
 };
 
 export type CustomElement =
+  | Title
   | Paragraph
   | InlineCode
   | HeadingOne

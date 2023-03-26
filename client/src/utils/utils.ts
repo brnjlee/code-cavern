@@ -31,7 +31,15 @@ export function genUniqueId() {
 export function curateDocuments(documents: any[]) {
   return documents.map((document) => ({
     ...document,
-    itemId: document.id,
+    itemId: document.id.toString(),
     id: genUniqueId(),
   }));
+}
+
+export function JsonToArray(json) {
+  var ret = new Uint8Array(Object.keys(json).length);
+  for (var i = 0; i < Object.keys(json).length; i++) {
+    ret[i] = json[i];
+  }
+  return ret;
 }

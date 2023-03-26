@@ -68,11 +68,6 @@ export class HocusPocusService {
       }),
     ],
     async onLoadDocument(data) {
-      const documentData = await prisma.documentData.findFirst({
-        where: {
-          documentId: parseInt(data.documentName),
-        },
-      });
       if (data.document.isEmpty('content')) {
         const insertDelta = slateNodesToInsertDelta([
           { type: 'paragraph', children: [{ text: '' }] },
@@ -80,7 +75,6 @@ export class HocusPocusService {
         const sharedRoot: any = data.document.get('content', Y.XmlText);
         sharedRoot.applyDelta(insertDelta);
       }
-
       return data.document;
     },
 

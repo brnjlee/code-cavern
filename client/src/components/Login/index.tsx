@@ -6,7 +6,6 @@ import { useSession, signIn, signOut } from "next-auth/react";
 
 const Login = () => {
   const { data: session, status } = useSession();
-  console.log(`${process.env.NEXT_PUBLIC_BASE_URL}/space/1`);
   return (
     <div className="w-[450px] p-5 text-slate-500 rounded-lg flex flex-col items-center">
       <h2 className="text-3xl font-bold text-slate-800 mb-10">Welcome back</h2>

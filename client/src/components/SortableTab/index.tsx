@@ -36,7 +36,9 @@ const SortableTab = ({
       ) : (
         <FaPython className="text-cyan-500 mr-1.5 text-base" />
       )}
-      <span className="font-semibold text-slate-600">{name}</span>
+      <span className="font-semibold text-slate-600">
+        {name.length ? name : "Untitled"}
+      </span>
       {children}
     </SortableItem>
   );

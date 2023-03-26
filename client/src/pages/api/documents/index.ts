@@ -12,14 +12,13 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  // console.log(req);
   const session = await getServerSession(req, res, authOptions);
   if (session) {
     if (req.method === "POST") {
       const newDocument = await prisma.document.create({
         data: {
           type: req.body.type,
-          name: "Untitled",
+          name: "",
           spaceId: parseInt(req.body.spaceId),
         },
       });

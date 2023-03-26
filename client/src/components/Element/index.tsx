@@ -4,21 +4,33 @@ import { ElementType } from "../../types";
 
 export function Element({ element, attributes, children }: RenderElementProps) {
   switch (element.type) {
+    case ElementType.TITLE:
+      return (
+        <h1
+          {...attributes}
+          className="element title text-[2.5rem] my-5 font-bold"
+        >
+          {children}
+        </h1>
+      );
     case ElementType.HEADING_ONE:
       return (
-        <h1 {...attributes} className="text-4xl my-5 font-medium">
+        <h1 {...attributes} className="element text-3xl mb-2 mt-8 font-medium">
           {children}
         </h1>
       );
     case ElementType.HEADING_TWO:
       return (
-        <h2 {...attributes} className="text-2xl my-2 font-semibold">
+        <h2
+          {...attributes}
+          className="element text-2xl mb-2 mt-5 font-semibold"
+        >
           {children}
         </h2>
       );
     case ElementType.HEADING_THREE:
       return (
-        <h3 {...attributes} className="text-xl my-2 font-semibold">
+        <h3 {...attributes} className="element text-xl my-2 mt-3 font-semibold">
           {children}
         </h3>
       );

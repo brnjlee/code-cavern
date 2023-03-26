@@ -62,7 +62,7 @@ const CreateDocumentModal = ({
         </div>
         <div className="flex flex-col justify-center whitespace-nowrap overflow-hidden ">
           <span className="text-sm font-semibold">{label}</span>
-          <span className="text-xs text-gray-400">{description}</span>
+          <span className="text-xs text-slate-400">{description}</span>
         </div>
       </div>
     )

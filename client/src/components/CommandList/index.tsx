@@ -164,64 +164,64 @@ export const CommandList = ({
     });
   };
 
-  const changeElementType = (editor: Editor, type: string) => {
+  const changeElementType = (editor: Editor, type: ElementType) => {
     ListsEditor.unwrapList(editor);
     const { selection } = editor;
+    const isList = type === "ordered-list" || type === "unordered-list";
+    const newChildren = isList
+      ? [
+          {
+            type: "list-item",
+            children: [{ type: "list-item-text", children: [{ text: "" }] }],
+          },
+        ]
+      : [
+          {
+            text: "",
+          },
+        ];
     if (selection) {
       const { text } = Editor.node(editor, selection)[0];
-      if (text.length === inputRef.current.length) {
-        Transforms.removeNodes(editor);
-      } else {
-        console.log(inputRef.current.length);
-        for (let i = 0; i < inputRef.current.length; i++) {
-          editor.deleteBackward("character");
-        }
+      for (let i = 0; i < inputRef.current.length; i++) {
+        editor.deleteBackward("character");
       }
-      const isList = type === "ordered-list" || type === "unordered-list";
-      const newChildren = isList
-        ? [
-            {
-              type: "list-item",
-              children: [{ type: "list-item-text", children: [{ text: "" }] }],
-            },
-          ]
-        : [
-            {
-              text: "",
-            },
-          ];
-      console.log(newChildren, type, isList);
+      if (text.length === inputRef.current.length) {
+        Transforms.setNodes(editor, { type, children: newChildren });
+        return;
+      }
+
       Transforms.insertNodes(editor, { type, children: newChildren });
     }
   };
 
   const renderCommands = commands.map(
-    ({ value, label, description, image }, key) => {
+    ({ value, label, description, icon, iconClass, selectedClass }, key) => {
       const isSelected = commands.map((e) => e.value).indexOf(value) === index;
       return (
         <div
           key={value}
           className={clsx(
-            isSelected && "bg-gray-100",
-            "flex py-1 rounded",
-            "hover:bg-gray-100"
+            isSelected && "bg-slate-100",
+            "group flex p-1 rounded-lg items-center hover:bg-slate-100 transition-all"
           )}
           role="button"
           tabIndex={0}
           onClick={() => changeElementType(editor, value)}
         >
-          <img
-            src={image}
+          <div
             className={clsx(
-              isSelected && "border-gray-300",
-              "border-gray-200",
-              "h-10 w-10 border object-cover rounded mx-2 bg-white"
+              isSelected && selectedClass,
+              iconClass,
+              "transition-all flex items-center justify-center w-8 min-w-[2rem] h-8 bg-slate-100 rounded-lg mr-2"
             )}
-            alt={label}
-          />
+          >
+            {icon}
+          </div>
           <div className="flex flex-col justify-center">
-            <span className="text-sm">{label}</span>
-            <span className="text-xs text-gray-400">{description}</span>
+            <span className="text-sm font-semibold text-slate-600">
+              {label}
+            </span>
+            <span className="text-xs text-slate-400">{description}</span>
           </div>
         </div>
       );
@@ -235,13 +235,13 @@ export const CommandList = ({
         left: "-9999px",
       }}
       className={clsx(
-        mounted ? "scale-1 opacity-100" : "scale-0 opacity-0",
-        "command-list-open w-150 max-h-80 overflow-y-scroll transition-scale origin-top-left absolute p-1 z-10 bg-white rounded shadow-3xl border border-slate-200 "
+        mounted ? "scale-100 opacity-100" : "scale-75 opacity-0",
+        "command-list-open w-150 max-h-80 overflow-y-auto transition-scale origin-top-left absolute p-1 z-10 bg-white rounded-lg shadow-xl border border-slate-200 "
       )}
     >
       {commands.length ? (
         <>
-          <div className="text-xs text-gray-400 p-2 font-semibold">
+          <div className="text-xs text-gray-400 p-1 mb-1 font-semibold">
             Text blocks
           </div>
           {renderCommands}

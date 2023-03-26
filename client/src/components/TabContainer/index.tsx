@@ -60,6 +60,7 @@ const TabContainer = ({
       tabs.find((t) => t.itemId === activeItemId) ?? {
         type: "NONE",
         itemId: "-1",
+        name: "",
       }
     );
   }, [activeItemId, tabs]);
@@ -109,11 +110,12 @@ const TabContainer = ({
   );
 
   const renderContent = () => {
-    switch (activeTab()?.type) {
+    const active = activeTab();
+    switch (active.type) {
       case "CODE":
-        return <CodeEditor id={activeTab()?.itemId} />;
+        return <CodeEditor id={active.itemId} />;
       case "TEXT":
-        return <TextEditor id={activeTab()?.itemId} />;
+        return <TextEditor id={active.itemId} name={active.name} />;
     }
   };
 

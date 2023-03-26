@@ -25,7 +25,6 @@ export function CustomEditable({
 
   return (
     <Editable
-      placeholder="Write something ..."
       {...props}
       renderElement={renderElement}
       renderLeaf={renderLeaf}

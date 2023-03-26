@@ -1,5 +1,9 @@
 [
   {
+    "type": "title",
+    "children": [{ "text": "" }]
+  },
+  {
     "type": "paragraph",
     "children": [{ "text": "" }]
   }

@@ -8,9 +8,18 @@ import React, {
   useState,
   ReactNode,
   useRef,
+  useMemo,
 } from "react";
 import ReactDOM from "react-dom";
-import { Range, createEditor, Descendant, Text, Transforms } from "slate";
+import {
+  Range,
+  createEditor,
+  Descendant,
+  Text,
+  Transforms,
+  Editor,
+  Element,
+} from "slate";
 import {
   getRemoteCaretsOnLeaf,
   getRemoteCursorsOnLeaf,
@@ -18,21 +27,24 @@ import {
 } from "@slate-yjs/react";
 import { RenderLeafProps, Slate, withReact } from "slate-react";
 import { withListsReact, onKeyDown } from "@prezly/slate-lists";
-import { motion, AnimatePresence } from "framer-motion";
+import * as Y from "yjs";
+import { UniqueIdentifier } from "@dnd-kit/core";
+import useSWR from "swr";
+import { slateNodesToInsertDelta } from "@slate-yjs/core";
 
 import { FormatToolbar } from "../FormatToolbar";
-import { withDefaultBreak } from "../../plugins/withDefaultBreak";
-import { withNormalize } from "../../plugins/withNormalize";
-import { withListsPlugin } from "../../plugins/withListsPlugin";
+import { withDefaultBreak } from "@/plugins/withDefaultBreak";
+import { withPreventDelete } from "@/plugins/withPreventDelete";
+import { withListsPlugin } from "@/plugins/withListsPlugin";
 import { CustomEditable } from "../CustomEditable";
 import { Leaf } from "../Leaf";
 import { ConnectionToggle } from "../ConnectionToggle";
 import { RemoteCursorOverlay } from "../RemoteCursorOverlay";
 import { CommandList } from "../CommandList";
-import { addAlpha, randomCursorData } from "../../utils/utils";
-import { CursorData } from "../../types";
-import * as Y from "yjs";
-import { UniqueIdentifier } from "@dnd-kit/core";
+import { addAlpha, randomCursorData, JsonToArray } from "@/utils/utils";
+import { CursorData, ElementType } from "@/types";
+import { fetcher } from "@/requests";
+import gettingStarted from "@/data/gettingStarted.json";
 
 const COMMAND_KEY = "/";
 type PortalProps = { children?: ReactNode };
@@ -81,62 +93,71 @@ const renderDecoratedLeaf = (props: RenderLeafProps) => {
   return <Leaf {...props} />;
 };
 
-let provider: any = undefined;
-let editor: any = undefined;
-const TextEditor = ({ id }: { id: UniqueIdentifier }) => {
+const TextEditor = ({ id, name }: { id: UniqueIdentifier; name: string }) => {
+  const [title, setTitle] = useState(name);
   const [value, setValue] = useState<Descendant[]>([]);
   const [connected, setConnected] = useState(false);
   const [target, setTarget] = useState<Range | null>();
-  const [index, setIndex] = useState(0);
-  const [command, setCommand] = useState("");
   const containerRef = useRef<HTMLDivElement>(null);
-
-  // Token parameter must exist in order to trigger onAuthenicate
   useEffect(() => {
-    provider = new HocuspocusProvider({
-      url: "ws://localhost:8080/collaborate",
-      parameters: { id },
-      name: "",
-      onConnect: () => setConnected(true),
-      onDisconnect: () => setConnected(false),
-      connect: false,
-    });
+    console.log("trigger");
+  }, [title]);
+
+  const provider = useMemo(
+    () =>
+      new HocuspocusProvider({
+        url: "ws://localhost:8080/collaborate",
+        parameters: { id },
+        name: "",
+        onConnect: () => setConnected(true),
+        onDisconnect: () => setConnected(false),
+        connect: false,
+        onSynced: ({ state }) => {
+          console.info(state);
+        },
+      }),
+    [id]
+  );
+
+  const editor = useMemo(() => {
     const sharedType = provider.document.get("content", Y.XmlText) as Y.XmlText;
-    editor = withListsReact(
+    return withListsReact(
       withListsPlugin(
         withDefaultBreak(
-          // withNormalize(
-          withReact(
-            withYHistory(
-              withCursors(
-                withYjs(createEditor(), sharedType, { autoConnect: false }),
-                provider.awareness,
-                {
-                  data: randomCursorData(),
-                }
+          withPreventDelete(
+            withReact(
+              withYHistory(
+                withCursors(
+                  withYjs(createEditor(), sharedType, { autoConnect: false }),
+                  provider.awareness,
+                  {
+                    data: randomCursorData(),
+                  }
+                )
               )
             )
-            // )
           )
         )
       )
     );
-    provider.connect();
-    return () => {
-      Transforms.deselect(editor);
-      if (provider) {
-        provider.disconnect();
-      }
-    };
-  }, []);
+  }, [provider.document]);
 
   const onChangeHandler = (value: Descendant[]) => {
-    // setValue(value)
-    // // closeCommandList()
-    // const { selection } = editor
+    console.log(value);
+    setValue(value);
+    const { selection } = editor;
+    const [titleBlock] = Editor.nodes(editor, {
+      match: (node) =>
+        !Editor.isEditor(node) &&
+        Element.isElement(node) &&
+        node.type === ElementType.TITLE,
+    });
+
     // // console.log(selection)
     // // if (selection && selection.anchor)
-    // if (selection && Range.isCollapsed(selection) && target) {
+    if (selection && Range.isCollapsed(selection) && titleBlock) {
+      console.log("hello");
+    }
     //   console.log('test')
     //   const [start] = Range.edges(selection)
     //   const wordBefore = Editor.before(editor, start, { unit: 'word' })
@@ -165,8 +186,16 @@ const TextEditor = ({ id }: { id: UniqueIdentifier }) => {
 
   const openCommandList = () => {
     const { selection } = editor;
-    setTarget(selection);
-    document.addEventListener("click", closeCommandList);
+    const [titleBlock] = Editor.nodes(editor, {
+      match: (node) =>
+        !Editor.isEditor(node) &&
+        Element.isElement(node) &&
+        node.type === ElementType.TITLE,
+    });
+    if (!titleBlock) {
+      setTarget(selection);
+      document.addEventListener("click", closeCommandList);
+    }
   };
   const closeCommandList = () => {
     setTarget(null);
@@ -196,14 +225,10 @@ const TextEditor = ({ id }: { id: UniqueIdentifier }) => {
     provider.connect();
   }, [provider, connected]);
 
-  // useEffect(() => {
-  //   provider.connect();
-  //   console.log("connect");
-  //   return () => {
-  //     console.log("disconnect");
-  //     provider.disconnect();
-  //   };
-  // }, [provider]);
+  useEffect(() => {
+    provider.connect();
+    return () => provider.disconnect();
+  }, [provider]);
   useEffect(() => {
     YjsEditor.connect(editor);
     return () => YjsEditor.disconnect(editor);
@@ -214,23 +239,23 @@ const TextEditor = ({ id }: { id: UniqueIdentifier }) => {
       ref={containerRef}
       className="text-editor bg-white rounded-b flex h-full justify-center overflow-y-auto"
     >
-      {editor && (
-        <div className="px-5 w-full max-w-5xl">
-          <Slate value={value} onChange={onChangeHandler} editor={editor}>
-            {target && (
-              <CommandList
-                target={target}
-                close={closeCommandList}
-                containerRef={containerRef}
-              />
-            )}
-            <FormatToolbar containerRef={containerRef} />
-            <DecoratedEditable />
-            {/* </RemoteCursorOverlay> */}
-          </Slate>
-          {/* <ConnectionToggle connected={connected} onClick={toggleConnection} /> */}
-        </div>
-      )}
+      {/* {editor && ( */}
+      <div className="px-5 w-full max-w-5xl">
+        <Slate value={value} onChange={onChangeHandler} editor={editor}>
+          {target && (
+            <CommandList
+              target={target}
+              close={closeCommandList}
+              containerRef={containerRef}
+            />
+          )}
+          <FormatToolbar containerRef={containerRef} />
+          <DecoratedEditable />
+          {/* </RemoteCursorOverlay> */}
+        </Slate>
+        {/* <ConnectionToggle connected={connected} onClick={toggleConnection} /> */}
+      </div>
+      {/* )} */}
     </div>
   );
 };

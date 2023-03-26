@@ -12,7 +12,6 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  // console.log(req);
   const session = await getServerSession(req, res, authOptions);
   if (session) {
     if (req.method === "GET") {
@@ -21,7 +20,6 @@ export default async function handler(
       });
       res.status(200).json(spaces);
     } else {
-      // const body = JSON.parse(req.body);
       const name = req.body.name?.trim();
       if (!name) {
         res.status(400).send("Invalid name");

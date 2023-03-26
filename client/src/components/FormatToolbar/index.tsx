@@ -5,13 +5,14 @@ import {
 } from "@radix-ui/react-icons";
 import React, { ReactNode, useState, useEffect, useRef } from "react";
 import ReactDOM from "react-dom";
-import { Editor, Text, Range, Transforms } from "slate";
+import { Editor, Text, Range, Transforms, Element } from "slate";
 import { ListsEditor } from "@prezly/slate-lists";
 import { useSlate } from "slate-react";
 import { FormatButton } from "./FormatButton";
 import { Select } from "../Select";
 import { FormatOptions } from "./FormatOptions";
 import clsx from "clsx";
+import { ElementType } from "@/types";
 
 type PortalProps = { children?: ReactNode };
 
@@ -40,6 +41,12 @@ export const FormatToolbar = ({
   useEffect(() => {
     const el = ref.current;
     const { selection } = editor;
+    const [titleBlock] = Editor.nodes(editor, {
+      match: (node) =>
+        !Editor.isEditor(node) &&
+        Element.isElement(node) &&
+        node.type === ElementType.TITLE,
+    });
 
     if (!el) {
       return;
@@ -47,7 +54,8 @@ export const FormatToolbar = ({
     setShow(
       !!selection &&
         !Range.isCollapsed(selection) &&
-        Editor.string(editor, selection) !== ""
+        Editor.string(editor, selection) !== "" &&
+        !titleBlock
     );
     if (!selection || !show) {
       // el.style.opacity = '0'

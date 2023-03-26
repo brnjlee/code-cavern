@@ -676,8 +676,8 @@ export class WebrtcProvider extends Observable {
     {
       signaling = [
         "wss://signaling.yjs.dev",
-        // "wss://y-webrtc-signaling-eu.herokuapp.com",
-        // "wss://y-webrtc-signaling-us.herokuapp.com"
+        "wss://y-webrtc-signaling-eu.herokuapp.com",
+        "wss://y-webrtc-signaling-us.herokuapp.com",
       ],
       password = null,
       awareness = new awarenessProtocol.Awareness(doc),

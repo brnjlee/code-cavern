@@ -21,15 +21,16 @@ import { FaPython } from "react-icons/fa";
 import { MdTextSnippet } from "react-icons/md";
 import clsx from "clsx";
 
-import Item from "../../components/Item";
-import TabContainer from "../../components/TabContainer";
-import FilesPanel from "../../components/FilesPanel";
-import Sidebar from "../../components/Sidebar";
-import Login from "../../components/Login";
-import { curateDocuments, genUniqueId } from "../../utils/utils";
-import { Tab, TabParents } from "../../types";
+import Item from "@/components/Item";
+import TabContainer from "@/components/TabContainer";
+import FilesPanel from "@/components/FilesPanel";
+import Sidebar from "@/components/Sidebar";
+import Login from "@/components/Login";
+import { curateDocuments, genUniqueId } from "@/utils/utils";
+import { Tab, TabParents } from "@/types";
 import CreateSpaceModal from "@/components/CreateSpaceModal";
 import SpacePanel from "@/components/SpacePanel";
+import { fetcher, createSpace, createDocument } from "@/requests";
 
 const DEFAULT_TABS = [
   {
@@ -110,34 +111,8 @@ type ActiveTabs = {
   [key: string]: UniqueIdentifier;
 };
 
-const fetcher = (...args) => fetch(...args).then((res) => res.json());
-const fetchWithArg = ([url, arg]) => fetch(url, {}).then((res) => res.json());
-
-async function createSpace(url: string, { arg }: { arg: any }) {
-  await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(arg),
-  });
-}
-
-const createDocument = (url: string, { arg }: { arg: any }) =>
-  fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(arg),
-  }).then((res) => res.json());
-
 export default () => {
   const { data: session, status } = useSession();
-  // const { data, error, isLoading } = useSWR(
-  //   session ? ["/api/spaces", session.token] : null,
-  //   ([url, token]) => fetchWithToken(url, token)
-  // );
   const { sid } = useRouter().query;
   const {
     data: spaces,

@@ -8,18 +8,18 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { sid } = req.query;
-  const id = parseInt(sid as string);
+  const { did } = req.query;
+  const id = parseInt(did as string);
   const session = await getServerSession(req, res, authOptions);
   if (session) {
     if (req.method === "GET") {
-      const space = await prisma.space.findFirst({
+      const document = await prisma.document.findFirst({
         where: { id },
         include: {
-          documents: true,
+          data: true,
         },
       });
-      res.status(200).json(space);
+      res.status(200).json(document);
     } else {
     }
   } else {
