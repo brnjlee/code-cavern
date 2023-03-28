@@ -30,6 +30,7 @@ import { curateDocuments, genUniqueId } from "@/utils/utils";
 import { Tab, TabParents } from "@/types";
 import CreateSpaceModal from "@/components/CreateSpaceModal";
 import SpacePanel from "@/components/SpacePanel";
+import InviteModal from "@/components/InviteModal";
 import { fetcher, createSpace, createDocument } from "@/requests";
 
 const DEFAULT_TABS = [
@@ -155,6 +156,7 @@ export default () => {
     }
   );
 
+  const [showInviteModal, setShowInviteModal] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showCreateDocumentModal, setShowCreateDocumentModal] = useState(false);
   const [draggedTab, setDraggedTab] = useState<DraggedTab | null>(null);
@@ -245,7 +247,12 @@ export default () => {
           "bg-slate-100 overflow-visible relative"
         )}
       >
-        {isRoot ? <SpacePanel name={activeSpaceName} /> : null}
+        {isRoot ? (
+          <SpacePanel
+            name={activeSpaceName}
+            openInviteModal={() => setShowInviteModal(true)}
+          />
+        ) : null}
         <PanelGroup direction={root.type} className="overflow-visible">
           {root.panels?.map((child: Panel, i: number) => (
             <>
@@ -631,6 +638,10 @@ export default () => {
             show={showCreateModal}
             close={() => setShowCreateModal(false)}
             createSpace={(spaceData) => createSpaceTrigger(spaceData)}
+          />
+          <InviteModal
+            show={showInviteModal}
+            onClickOutside={() => setShowInviteModal(false)}
           />
         </div>
       ) : (

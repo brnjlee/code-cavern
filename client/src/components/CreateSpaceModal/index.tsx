@@ -34,7 +34,11 @@ const CreateSpaceModal = ({
 
   useEffect(() => {
     if (emblaApi) {
-      setTimeout(() => emblaApi.scrollTo(0), 500);
+      if (!show) {
+        setTimeout(() => emblaApi.scrollTo(0), 500);
+      } else {
+        setTimeout(() => emblaApi.reInit(), 500);
+      }
     }
   }, [show]);
 
