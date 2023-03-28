@@ -578,12 +578,11 @@ export default () => {
   if (status === "loading") {
     return <p>Hang on there...</p>;
   }
-  if (spacesError) return <div>failed to load</div>;
   if (spacesIsLoading) return <div>loading...</div>;
 
   return (
     <div className="h-screen bg-slate-300">
-      {status === "authenticated" ? (
+      {status === "authenticated" && !spacesError ? (
         <div className="h-full flex">
           <Sidebar
             spaces={spaces}

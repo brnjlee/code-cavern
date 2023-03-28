@@ -41,6 +41,7 @@
     "@types/react-dom": "18.0.11",
     "clsx": "^1.2.1",
     "codemirror": "5.x",
+    "embla-carousel-react": "^7.1.0",
     "eslint": "8.35.0",
     "eslint-config-next": "13.2.3",
     "framer-motion": "^10.1.0",

@@ -8,8 +8,9 @@ import dynamic from "next/dynamic";
 
 import { ConnectionToggle } from "../../components/ConnectionToggle";
 import setMode from "./languageMapper";
-import { randomCursorData } from "@/utils/utils";
+import { cursorData } from "@/utils/utils";
 import { UniqueIdentifier } from "@dnd-kit/core";
+import { useSession } from "next-auth/react";
 
 let yCodemirror: any = null;
 if (typeof window !== "undefined" && typeof window.navigator !== "undefined") {
@@ -25,6 +26,7 @@ const Uncontrolled = dynamic(
 
 let provider: any = null;
 const CodeEditor = ({ id }: { id: UniqueIdentifier }) => {
+  const { data: session, status } = useSession();
   const [EditorRef, setEditorRef] = useState(null);
   const [code, setCode] = useState("");
   const [connected, setConnected] = useState(false);
@@ -41,7 +43,10 @@ const CodeEditor = ({ id }: { id: UniqueIdentifier }) => {
       const yUndoManager = new Y.UndoManager(yText);
       const awareness = provider.awareness;
       const color = RandomColor();
-      awareness.setLocalStateField("user", randomCursorData());
+      awareness.setLocalStateField(
+        "user",
+        cursorData(session?.user?.name || "Unknown user")
+      );
       const getBinding = new yCodemirror.CodemirrorBinding(
         yText,
         EditorRef,
