@@ -4,8 +4,9 @@ import clsx from "clsx";
 type InviteModal = {
   show: boolean;
   onClickOutside: () => void;
+  inviteUser: (email: string) => void;
 };
-const InviteModal = ({ show, onClickOutside }: InviteModal) => {
+const InviteModal = ({ show, onClickOutside, inviteUser }: InviteModal) => {
   const ref = useRef(null);
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -34,8 +35,10 @@ const InviteModal = ({ show, onClickOutside }: InviteModal) => {
         className="bg-white px-5 py-4 text-slate-500 rounded-lg flex flex-col"
         onSubmit={(event) => {
           event.preventDefault();
-          const data = Object.fromEntries(new FormData(event.currentTarget));
-          // createSpace(data);
+          const { email } = Object.fromEntries(
+            new FormData(event.currentTarget)
+          );
+          inviteUser(email);
         }}
       >
         <h3 className="text-xl text-black mb-1 font-bold">Invite others</h3>

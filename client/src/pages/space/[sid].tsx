@@ -562,6 +562,10 @@ export default () => {
     })
   );
 
+  const handleInviteUser = (email: string) => {
+    console.log(email, space);
+  };
+
   const renderItem = (
     <Item
       id={draggedTab?.name ?? ""}
@@ -642,6 +646,7 @@ export default () => {
           <InviteModal
             show={showInviteModal}
             onClickOutside={() => setShowInviteModal(false)}
+            inviteUser={handleInviteUser}
           />
         </div>
       ) : (

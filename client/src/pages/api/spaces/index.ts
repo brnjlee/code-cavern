@@ -30,6 +30,13 @@ export default async function handler(
           createdById: session.sub,
         },
       });
+      const newSpaceMember = await prisma.spaceMember.create({
+        data: {
+          spaceId: newSpace.id,
+          memberId: session.sub,
+          role: "ADMIN",
+        },
+      });
       const firstDocument = await prisma.document.create({
         data: {
           type: "TEXT",
