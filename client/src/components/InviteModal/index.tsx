@@ -4,9 +4,9 @@ import clsx from "clsx";
 type InviteModal = {
   show: boolean;
   onClickOutside: () => void;
-  inviteUser: (email: string) => void;
+  inviteMember: (email: string) => void;
 };
-const InviteModal = ({ show, onClickOutside, inviteUser }: InviteModal) => {
+const InviteModal = ({ show, onClickOutside, inviteMember }: InviteModal) => {
   const ref = useRef(null);
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -38,7 +38,7 @@ const InviteModal = ({ show, onClickOutside, inviteUser }: InviteModal) => {
           const { email } = Object.fromEntries(
             new FormData(event.currentTarget)
           );
-          inviteUser(email);
+          inviteMember(email.toString());
         }}
       >
         <h3 className="text-xl text-black mb-1 font-bold">Invite others</h3>

@@ -43,7 +43,7 @@ import { RemoteCursorOverlay } from "../RemoteCursorOverlay";
 import { CommandList } from "../CommandList";
 import { addAlpha, cursorData } from "@/utils/utils";
 import { CursorData, ElementType } from "@/types";
-import { updateDocument } from "@/requests";
+import { patcher } from "@/requests";
 import useDebounce from "@/hooks/use-debounce";
 
 const COMMAND_KEY = "/";
@@ -103,7 +103,7 @@ const TextEditor = ({ id, name }: { id: UniqueIdentifier; name: string }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { trigger: updateDocumentTrigger } = useSWRMutation(
     `/api/documents/${id}`,
-    updateDocument,
+    patcher,
     {
       onSuccess(data, key, config) {},
       onError(err, key, config) {

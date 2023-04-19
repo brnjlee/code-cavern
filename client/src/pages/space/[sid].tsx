@@ -31,46 +31,7 @@ import { Tab, TabParents } from "@/types";
 import CreateSpaceModal from "@/components/CreateSpaceModal";
 import SpacePanel from "@/components/SpacePanel";
 import InviteModal from "@/components/InviteModal";
-import { fetcher, createSpace, createDocument } from "@/requests";
-
-const DEFAULT_TABS = [
-  {
-    type: "code",
-    name: "test9.py",
-    itemId: "500",
-    id: genUniqueId(),
-  },
-  {
-    type: "code",
-    name: "test2.py",
-    itemId: "501",
-    id: genUniqueId(),
-  },
-  {
-    type: "code",
-    name: "test3.py",
-    itemId: "502",
-    id: genUniqueId(),
-  },
-  {
-    type: "code",
-    name: "test4.py",
-    itemId: "503",
-    id: genUniqueId(),
-  },
-  {
-    type: "text",
-    name: "a.md",
-    itemId: "1",
-    id: genUniqueId(),
-  },
-  {
-    type: "text",
-    name: "test6.md",
-    itemId: "2",
-    id: genUniqueId(),
-  },
-];
+import { fetcher, poster } from "@/requests";
 
 type DirectionTable = {
   right: string;
@@ -132,7 +93,7 @@ export default () => {
   });
   const { trigger: createSpaceTrigger } = useSWRMutation(
     "/api/spaces",
-    createSpace,
+    poster,
     {
       onSuccess(data, key, config) {
         setShowCreateModal(false);
@@ -144,11 +105,23 @@ export default () => {
   );
   const { trigger: createDocumentTrigger } = useSWRMutation(
     "/api/documents",
-    createDocument,
+    poster,
     {
       onSuccess(document, key, config) {
         setShowCreateDocumentModal(false);
         setSidebarTabs((prev) => [...prev, ...curateDocuments([document])]);
+      },
+      onError(err, key, config) {
+        console.info(err);
+      },
+    }
+  );
+  const { trigger: inviteMemberTrigger } = useSWRMutation(
+    "/api/spaces/invite",
+    poster,
+    {
+      onSuccess(spaceMember, key, config) {
+        console.log("space member", spaceMember);
       },
       onError(err, key, config) {
         console.info(err);
@@ -160,7 +133,7 @@ export default () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showCreateDocumentModal, setShowCreateDocumentModal] = useState(false);
   const [draggedTab, setDraggedTab] = useState<DraggedTab | null>(null);
-  const [sidebarTabs, setSidebarTabs] = useState<Tab[]>(DEFAULT_TABS);
+  const [sidebarTabs, setSidebarTabs] = useState<Tab[]>([]);
   const [tabParents, setTabParents] = useState<TabParents>({});
   const [activeTabs, setActiveTabs] = useState<ActiveTabs>({});
   const [activeSpaceName, setActiveSpaceName] = useState("");
@@ -562,10 +535,6 @@ export default () => {
     })
   );
 
-  const handleInviteUser = (email: string) => {
-    console.log(email, space);
-  };
-
   const renderItem = (
     <Item
       id={draggedTab?.name ?? ""}
@@ -646,7 +615,9 @@ export default () => {
           <InviteModal
             show={showInviteModal}
             onClickOutside={() => setShowInviteModal(false)}
-            inviteUser={handleInviteUser}
+            inviteMember={(email) =>
+              inviteMemberTrigger({ email, spaceId: sid })
+            }
           />
         </div>
       ) : (

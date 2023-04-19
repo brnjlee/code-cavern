@@ -37,7 +37,7 @@ export default async function handler(
       res.status(200).json(newDocument);
     }
   } else {
-    res.status(401).send("Unauthorized");
+    res.status(401).send({ error: "Unauthorized" });
   }
   res.end();
 }

@@ -23,7 +23,7 @@ export default async function handler(
     } else {
     }
   } else {
-    res.status(401).send("Unauthorized");
+    res.status(401).send({ error: "Unauthorized" });
   }
   res.end();
 }

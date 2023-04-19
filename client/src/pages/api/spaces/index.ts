@@ -22,7 +22,7 @@ export default async function handler(
     } else {
       const name = req.body.name?.trim();
       if (!name) {
-        res.status(400).send("Invalid name");
+        res.status(400).send({ error: "Invalid name" });
       }
       const newSpace = await prisma.space.create({
         data: {
@@ -34,6 +34,7 @@ export default async function handler(
         data: {
           spaceId: newSpace.id,
           memberId: session.sub,
+          pendingEmail: session.user?.email,
           role: "ADMIN",
         },
       });
@@ -57,7 +58,7 @@ export default async function handler(
       res.status(200).json(newSpace);
     }
   } else {
-    res.status(401).send("Unauthorized");
+    res.status(401).send({ error: "Unauthorized" });
   }
   res.end();
 }
