@@ -73,6 +73,7 @@ model SpaceMember {
   memberId      String?
   pendingEmail  String?
   role          Role      @default(ADMIN)
+  createdAt     DateTime  @default(now())
   @@unique([spaceId, pendingEmail])
   @@unique([spaceId, memberId])
 }

@@ -13,10 +13,13 @@ export default async function handler(
     let { sid } = req.query;
     const spaceId = parseInt(sid as string);
     if (req.method === "GET") {
-      // const spaceMembers = await prisma.spaceMember.findMany({
-      //   where: { spaceId:  },
-      // });
-      // res.status(200).json(spaces);
+      const spaceMembers = await prisma.spaceMember.findMany({
+        where: { spaceId },
+        include: {
+          member: true,
+        },
+      });
+      res.status(200).json(spaceMembers);
     } else if (req.method === "POST") {
       const existingSpaceMember = await prisma.spaceMember.findFirst({
         where: { spaceId, pendingEmail: req.body.email },

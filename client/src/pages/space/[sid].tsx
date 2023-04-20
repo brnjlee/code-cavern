@@ -116,18 +116,6 @@ export default () => {
       },
     }
   );
-  const { trigger: inviteMemberTrigger } = useSWRMutation(
-    "/api/spaces/invite",
-    poster,
-    {
-      onSuccess(spaceMember, key, config) {
-        console.log("space member", spaceMember);
-      },
-      onError(err, key, config) {
-        console.info(err);
-      },
-    }
-  );
 
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
