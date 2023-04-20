@@ -614,10 +614,8 @@ export default () => {
           />
           <InviteModal
             show={showInviteModal}
+            space={space}
             onClickOutside={() => setShowInviteModal(false)}
-            inviteMember={(email) =>
-              inviteMemberTrigger({ email, spaceId: sid })
-            }
           />
         </div>
       ) : (

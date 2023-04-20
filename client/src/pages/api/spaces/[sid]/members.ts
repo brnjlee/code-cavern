@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { PrismaClient } from "@prisma/client";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "../auth/[...nextauth]";
+import { authOptions } from "../../auth/[...nextauth]";
 
 const prisma = new PrismaClient();
 export default async function handler(
@@ -10,8 +10,14 @@ export default async function handler(
 ) {
   const session = await getServerSession(req, res, authOptions);
   if (session) {
-    if (req.method === "POST") {
-      const spaceId = parseInt(req.body.spaceId);
+    let { sid } = req.query;
+    const spaceId = parseInt(sid as string);
+    if (req.method === "GET") {
+      // const spaceMembers = await prisma.spaceMember.findMany({
+      //   where: { spaceId:  },
+      // });
+      // res.status(200).json(spaces);
+    } else if (req.method === "POST") {
       const existingSpaceMember = await prisma.spaceMember.findFirst({
         where: { spaceId, pendingEmail: req.body.email },
       });
