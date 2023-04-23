@@ -15,8 +15,14 @@ export default async function handler(
   const session = await getServerSession(req, res, authOptions);
   if (session) {
     if (req.method === "GET") {
-      const spaces = await prisma.space.findMany({
-        where: { createdById: session.sub },
+      const spaces = await prisma.spaceMember.findMany({
+        where: {
+          memberId: session.sub,
+          active: true,
+        },
+        select: {
+          space: true,
+        },
       });
       res.status(200).json(spaces);
     } else {
@@ -30,7 +36,7 @@ export default async function handler(
           createdById: session.sub,
         },
       });
-      const newSpaceMember = await prisma.spaceMember.create({
+      await prisma.spaceMember.create({
         data: {
           spaceId: newSpace.id,
           memberId: session.sub,
@@ -49,7 +55,7 @@ export default async function handler(
       const sharedType = yDoc.get("content", Y.XmlText);
       sharedType.applyDelta(slateNodesToInsertDelta(gettingStarted as any));
 
-      const firstDocumentData = await prisma.documentData.create({
+      await prisma.documentData.create({
         data: {
           data: Y.encodeStateAsUpdate(yDoc) as any,
           documentId: firstDocument.id,

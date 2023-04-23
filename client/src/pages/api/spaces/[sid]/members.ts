@@ -37,6 +37,7 @@ export default async function handler(
           memberId: invitedUser ? invitedUser.id : null,
           pendingEmail: invitedUser ? invitedUser.email : req.body.email,
           role: "EDIT",
+          active: false,
         },
       });
       res.status(200).json(newSpaceMember);

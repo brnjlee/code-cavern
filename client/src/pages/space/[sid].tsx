@@ -81,6 +81,7 @@ export default () => {
     error: spacesError,
     isLoading: spacesIsLoading,
   } = useSWR("/api/spaces", fetcher);
+  console.log(spaces);
   const {
     data: space,
     error: documentsError,

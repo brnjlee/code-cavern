@@ -15,7 +15,7 @@ const Sidebar = ({
   active?: string;
   openCreateModal: () => void;
 }) => {
-  const renderSidebarItems = spaces.map(({ id, name }) => (
+  const renderSidebarItems = spaces.map(({ space: { id, name } }) => (
     <Tooltip key={id} className="mb-2" label={name} direction="right">
       <Link href={`/space/${id}`}>
         <SidebarItem
