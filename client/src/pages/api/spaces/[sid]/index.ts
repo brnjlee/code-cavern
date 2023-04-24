@@ -28,7 +28,7 @@ export default async function handler(
         },
       });
       if (!spaceMember) {
-        res.status(401).send({ error: "No permission" });
+        res.status(400).send({ error: "No permission" });
       }
       const space = await prisma.space.findFirst({
         where: { id },

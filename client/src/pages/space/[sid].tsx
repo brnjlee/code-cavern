@@ -81,7 +81,6 @@ export default () => {
     error: spacesError,
     isLoading: spacesIsLoading,
   } = useSWR("/api/spaces", fetcher);
-  console.log(spaces);
   const {
     data: space,
     error: documentsError,
@@ -548,7 +547,6 @@ export default () => {
     return <p>Hang on there...</p>;
   }
   if (spacesIsLoading) return <div>loading...</div>;
-
   return (
     <div className="h-screen bg-slate-300">
       {status === "authenticated" && !spacesError ? (
@@ -591,7 +589,7 @@ export default () => {
                 {renderLayout(layout, true)}
               </PanelGroup>
             ) : (
-              <div> Space is not found</div>
+              <div>{documentsError?.info.error}</div>
             )}
             <DragOverlay>{draggedTab ? renderItem : null}</DragOverlay>
           </DndContext>
