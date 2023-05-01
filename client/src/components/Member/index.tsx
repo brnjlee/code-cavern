@@ -25,7 +25,7 @@ const Member = ({ id, member, pendingEmail, role, createdAt }: Member) => {
         height={35}
         className="rounded-full mr-2 border border-slate-300"
         src={member ? member.image : "http://www.gravatar.com/avatar/?d=mp"}
-        alt="Connection Status"
+        alt="user avatar"
       />
       <div className="flex flex-col justify-center">
         <span className="text-sm font-semibold text-slate-900">

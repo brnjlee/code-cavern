@@ -30,7 +30,7 @@ const FilesPanel = ({
       disabled={false}
       parent={"sidebar"}
       onClick={() => openTab({ type, name, id, itemId })}
-      className=" group hover:bg-gray-200 pl-2 pr-1 py-1 text-base"
+      className=" group hover:bg-gray-600 pl-2 pr-1 py-1 text-base"
     >
       {/* {openedTabs[itemId]?.length ? (
           <div className="absolute left-3 w-1 h-1 ml-auto bg-slate-300 rounded-[2rem] group-hover:w-2 transition-all" />
@@ -38,18 +38,18 @@ const FilesPanel = ({
     </SortableTab>
   ));
   return (
-    <div className="h-full rounded p-5 flex flex-col relative">
+    <div className="h-full p-3 flex flex-col relative">
       <div className="h-full">
-        <h3 className="font-bold mb-2 text-slate-600">Files</h3>
+        <h3 className="font-bold mb-2 text-slate-200">Files</h3>
         {renderTabs}
       </div>
       <div className="h-10 flex items-center justify-center">
         <button
           type="button"
           onClick={() => setShowCreateDocumentModal(true)}
-          className="transition-all flex items-center  justify-center w-full font-semibold border border-slate-200 p-1 bg-white hover:bg-slate-200 rounded-lg text-slate-800 hover:text-slate-900"
+          className="transition-all flex items-center justify-center w-full font-semibold p-1 mb-2 bg-slate-900 hover:bg-slate-800 rounded text-slate-200 hover:text-white"
         >
-          <FiPlus className="" />
+          {/* <FiPlus className="" /> */}
           New Document
         </button>
         <CreateDocumentModal

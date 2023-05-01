@@ -84,7 +84,7 @@ const CodeEditor = ({ id }: { id: UniqueIdentifier }) => {
         autoScroll
         options={{
           mode: setMode(lang),
-          theme: true ? "eclipse" : "ayu-mirage",
+          theme: "ayu-mirage",
           lineWrapping: true,
           smartIndent: true,
           lineNumbers: true,

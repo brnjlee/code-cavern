@@ -62,7 +62,7 @@ const InviteModal = ({ show, onClickOutside, space }: InviteModal) => {
         show
           ? "opacity-100 visible scale-100 top-[3rem]"
           : "opacity-0 invisible scale-90 top-[2rem]",
-        "transition-all absolute w-[350px] bg-white right-4 text-slate-500 flex flex-col rounded-lg shadow-xl border border-slate-200"
+        "transition-all absolute w-[350px] bg-white left-[5rem] text-slate-500 flex flex-col rounded-lg shadow-xl border border-slate-200"
       )}
     >
       <Form.Root

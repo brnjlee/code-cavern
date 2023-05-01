@@ -249,7 +249,7 @@ const TextEditor = ({ id, name }: { id: UniqueIdentifier; name: string }) => {
   return (
     <div
       ref={containerRef}
-      className="text-editor bg-white rounded-b flex h-full justify-center overflow-y-auto"
+      className="text-editor bg-slate-600 text-white rounded-b flex h-full justify-center overflow-y-auto"
     >
       {/* {editor && ( */}
       <div className="px-5 w-full max-w-5xl">
