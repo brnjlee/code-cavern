@@ -76,8 +76,8 @@ const TabContainer = ({
       parent={containerId}
       onClick={() => setActiveItemId(itemId)}
       className={clsx(
-        activeItemId === itemId && "bg-slate-200 pl-4 pr-3",
-        "text-sm bg-gray-100 hover:bg-gray-200 pl-2 pr-1 ml-1.5 h-7"
+        activeItemId === itemId ? "bg-slate-800 pl-4 pr-3" : "bg-slate-700",
+        "text-sm  hover:bg-slate-800 pl-2 pr-1 ml-1.5 h-7"
       )}
     >
       <button
@@ -120,19 +120,10 @@ const TabContainer = ({
   };
 
   return (
-    <div className="relative h-full border border-slate-200 rounded flex flex-col">
+    <div className="relative h-full flex flex-col">
       <SortableContext items={tabs} strategy={horizontalListSortingStrategy}>
-        <div className="bg-white h-10 flex items-center rounded-t">
+        <div className="bg-slate-600 h-[3rem] min-h-[3rem] border-b-2 border-slate-700 flex items-center">
           {renderTabs}
-          <button
-            type="button"
-            onClick={() => {}}
-            className={clsx(
-              "transition-all text-slate-400 h-6 w-6 ml-1 flex justify-center items-center hover:text-slate-600 hover:bg-slate-200 rounded-lg p-[3px]"
-            )}
-          >
-            <FiPlus className="h-4 w-4" />
-          </button>
         </div>
       </SortableContext>
       <div className="top-10 absolute h-[calc(100%-2.5rem)] right-0 left-0 grid grid-cols-5 grid-rows-2">

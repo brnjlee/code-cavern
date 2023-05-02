@@ -28,7 +28,7 @@ const SortableTab = ({
       {...props}
       className={clsx(
         className,
-        "select-none rounded flex items-center transition-all"
+        "select-none rounded flex items-center transition-all text-slate-300 hover:text-white"
       )}
     >
       {type === "TEXT" ? (
@@ -36,7 +36,7 @@ const SortableTab = ({
       ) : (
         <FaPython className="text-cyan-500 mr-1.5 text-base" />
       )}
-      <span className="font-semibold text-slate-600">
+      <span className="font-[500] text-[15px]">
         {name.length ? name : "Untitled"}
       </span>
       {children}

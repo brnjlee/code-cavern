@@ -38,7 +38,7 @@ const CodeEditor = ({ id }: { id: UniqueIdentifier }) => {
   useEffect(() => {
     if (EditorRef) {
       const ydoc = new Y.Doc();
-      provider = new WebrtcProvider(id, ydoc);
+      provider = new WebrtcProvider(id.toString(), ydoc);
       const yText = ydoc.getText("codemirror");
       const yUndoManager = new Y.UndoManager(yText);
       const awareness = provider.awareness;
@@ -84,7 +84,7 @@ const CodeEditor = ({ id }: { id: UniqueIdentifier }) => {
         autoScroll
         options={{
           mode: setMode(lang),
-          theme: true ? "eclipse" : "ayu-mirage",
+          theme: "ayu-mirage",
           lineWrapping: true,
           smartIndent: true,
           lineNumbers: true,

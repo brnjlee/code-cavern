@@ -81,7 +81,6 @@ export default () => {
     error: spacesError,
     isLoading: spacesIsLoading,
   } = useSWR("/api/spaces", fetcher);
-  console.log(spaces);
   const {
     data: space,
     error: documentsError,
@@ -182,7 +181,7 @@ export default () => {
   const renderLayout = (root: Panel, isRoot: boolean) => {
     if (root.type === "panel") {
       return (
-        <Panel className="bg-slate-100 shadow-sm">
+        <Panel className="bg-slate-600">
           <TabContainer
             key={root.id}
             tabs={root.tabs || []}
@@ -201,26 +200,23 @@ export default () => {
         </Panel>
       );
     }
-    const resizeHandleClass = root.type === "horizontal" ? "w-2" : "h-2";
+    const resizeHandleClass =
+      root.type === "horizontal"
+        ? "w-1 border-r-2 border-slate-700 hover:w-2"
+        : "h-1 border-b-2 border-slate-700 hover:h-2";
     return (
-      <Panel
-        className={clsx(
-          isRoot && "pt-12 pb-4 pr-4",
-          "bg-slate-100 overflow-visible relative"
-        )}
-      >
-        {isRoot ? (
-          <SpacePanel
-            name={activeSpaceName}
-            openInviteModal={() => setShowInviteModal(true)}
-          />
-        ) : null}
+      <Panel className={clsx("bg-slate-600 overflow-visible relative")}>
         <PanelGroup direction={root.type} className="overflow-visible">
           {root.panels?.map((child: Panel, i: number) => (
             <>
               {renderLayout(child, false)}
               {i < root.panels.length - 1 ? (
-                <PanelResizeHandle className={resizeHandleClass} />
+                <PanelResizeHandle
+                  className={clsx(
+                    resizeHandleClass,
+                    "hover:bg-slate-400 transition-all"
+                  )}
+                />
               ) : null}
             </>
           ))}
@@ -315,7 +311,8 @@ export default () => {
   const handleDragOver = (event: DragOverEvent) => {
     const { active, over } = event;
     if (!over || !active) return;
-    const isSortable = over?.data.current?.name;
+    const isSortable = over?.data.current?.name !== undefined;
+    console.info(over?.data.current?.name);
     if (isSortable) {
       if (active.data.current?.parent !== over.data.current?.parent) {
         let newLayout = JSON.parse(JSON.stringify(layout));
@@ -548,9 +545,8 @@ export default () => {
     return <p>Hang on there...</p>;
   }
   if (spacesIsLoading) return <div>loading...</div>;
-
   return (
-    <div className="h-screen bg-slate-300">
+    <div className="h-screen bg-slate-900">
       {status === "authenticated" && !spacesError ? (
         <div className="h-full flex">
           <Sidebar
@@ -567,31 +563,35 @@ export default () => {
           >
             {!documentsError ? (
               <PanelGroup direction="horizontal">
-                <Panel
-                  defaultSize={15}
-                  maxSize={20}
-                  className="bg-slate-100 rounded-l-xl"
-                >
+                <Panel defaultSize={15} maxSize={20}>
                   {!documentsIsLoading ? (
-                    <FilesPanel
-                      tabs={sidebarTabs}
-                      openTab={handleOpenTab}
-                      openedTabs={tabParents}
-                      showCreateDocumentModal={showCreateDocumentModal}
-                      setShowCreateDocumentModal={(state) =>
-                        setShowCreateDocumentModal(state)
-                      }
-                      createDocument={(value) =>
-                        createDocumentTrigger({ type: value, spaceId: sid })
-                      }
-                    />
+                    <div className="flex flex-col h-full bg-slate-700">
+                      <SpacePanel
+                        name={activeSpaceName}
+                        openInviteModal={() => setShowInviteModal(true)}
+                      />
+                      <FilesPanel
+                        tabs={sidebarTabs}
+                        openTab={handleOpenTab}
+                        openedTabs={tabParents}
+                        showCreateDocumentModal={showCreateDocumentModal}
+                        setShowCreateDocumentModal={(state) =>
+                          setShowCreateDocumentModal(state)
+                        }
+                        createDocument={(value) =>
+                          createDocumentTrigger({ type: value, spaceId: sid })
+                        }
+                      />
+                    </div>
                   ) : null}
                 </Panel>
-                <PanelResizeHandle className="w-2 bg-slate-100" />
+                <PanelResizeHandle className="w-2 bg-slate-700">
+                  <div className="h-[3rem] border-b-2 border-slate-800"></div>
+                </PanelResizeHandle>
                 {renderLayout(layout, true)}
               </PanelGroup>
             ) : (
-              <div> Space is not found</div>
+              <div>{documentsError?.info.error}</div>
             )}
             <DragOverlay>{draggedTab ? renderItem : null}</DragOverlay>
           </DndContext>

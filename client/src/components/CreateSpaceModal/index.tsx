@@ -153,7 +153,7 @@ const CreateSpaceModal = ({
     <div
       className={clsx(
         show ? "opacity-100 visible" : "opacity-0 invisible",
-        "fixed transition-all inset-0 bg-slate-300/[.7] flex items-center justify-center"
+        "fixed transition-all inset-0 bg-slate-800/[.7] flex items-center justify-center"
       )}
       onClick={close}
     >

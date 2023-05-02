@@ -28,7 +28,7 @@ export default async function handler(
         sharedType.applyDelta(slateNodesToInsertDelta(emptyDoc as any));
       }
 
-      const newDocumentData = await prisma.documentData.create({
+      await prisma.documentData.create({
         data: {
           data: Y.encodeStateAsUpdate(yDoc) as any,
           documentId: newDocument.id,

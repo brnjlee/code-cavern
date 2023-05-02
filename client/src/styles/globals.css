@@ -6,7 +6,7 @@
 
 :root {
   --tooltip-text-color: white;
-  --tooltip-background-color: rgb(51 65 85);
+  --tooltip-background-color: rgb(15 23 42);
   --tooltip-margin: 7px;
   --tooltip-arrow-size: 4px;
 }
@@ -135,4 +135,12 @@ h3.element span:has(> br)::before {
   flex-direction: column;
   align-items: center;
   min-width: 0;
+}
+
+.CodeMirror-scroll {
+  background-color: rgb(71 85 105);
+}
+.CodeMirror-gutters {
+  background-color: rgb(71 85 105) !important;
+  border-right: 1px solid rgb(51 65 85) !important;
 }
