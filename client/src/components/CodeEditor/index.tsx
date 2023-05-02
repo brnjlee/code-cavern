@@ -1,12 +1,9 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState, useMemo } from "react";
 import { HocuspocusProvider } from "@hocuspocus/provider";
 import * as Y from "yjs";
 import RandomColor from "randomcolor";
-import { WebsocketProvider } from "y-websocket";
-import { WebrtcProvider } from "../../utils/yjs/y-webrtc";
 import dynamic from "next/dynamic";
 
-import { ConnectionToggle } from "../../components/ConnectionToggle";
 import setMode from "./languageMapper";
 import { cursorData } from "@/utils/utils";
 import { UniqueIdentifier } from "@dnd-kit/core";
@@ -24,22 +21,32 @@ const Uncontrolled = dynamic(
   }
 );
 
-let provider: any = null;
 const CodeEditor = ({ id }: { id: UniqueIdentifier }) => {
   const { data: session, status } = useSession();
   const [EditorRef, setEditorRef] = useState(null);
   const [code, setCode] = useState("");
-  const [connected, setConnected] = useState(false);
   const [lang, setLang] = useState("javascript");
 
-  const handleEditorDidMount = (editor) => {
+  const handleEditorDidMount = (editor: any) => {
     setEditorRef(editor);
   };
+
+  const provider = useMemo(
+    () =>
+      new HocuspocusProvider({
+        url: "ws://localhost:8080/collaborate",
+        parameters: { id },
+        name: "",
+        connect: false,
+        onSynced: ({ state }) => {
+          console.info(state);
+        },
+      }),
+    [id]
+  );
   useEffect(() => {
     if (EditorRef) {
-      const ydoc = new Y.Doc();
-      provider = new WebrtcProvider(id.toString(), ydoc);
-      const yText = ydoc.getText("codemirror");
+      const yText = provider.document.getText("codemirror");
       const yUndoManager = new Y.UndoManager(yText);
       const awareness = provider.awareness;
       const color = RandomColor();
@@ -56,24 +63,13 @@ const CodeEditor = ({ id }: { id: UniqueIdentifier }) => {
         }
       );
       provider.connect();
-      setConnected(true);
       return () => {
         if (provider) {
-          setConnected(false);
           provider.disconnect();
-          ydoc.destroy();
         }
       };
     }
-  }, [EditorRef, id]);
-  // const toggleConnection = useCallback(() => {
-  //   if (connected) {
-  //     setConnected(false);
-  //     return provider.disconnect();
-  //   }
-  //   setConnected(true);
-  //   provider.connect();
-  // }, [provider, connected]);
+  }, [EditorRef, provider.document]);
 
   return (
     <div className="flex h-full w-full rounded-b overflow-y-auto text-base">
@@ -103,7 +99,6 @@ const CodeEditor = ({ id }: { id: UniqueIdentifier }) => {
           editor.setSize("100vw", "100%");
         }}
       />
-      {/* <ConnectionToggle connected={connected} onClick={toggleConnection} /> */}
     </div>
   );
 };

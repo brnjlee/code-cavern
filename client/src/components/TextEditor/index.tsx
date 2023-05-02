@@ -132,7 +132,6 @@ const TextEditor = ({ id, name }: { id: UniqueIdentifier; name: string }) => {
   );
 
   const editor = useMemo(() => {
-    console.log(session);
     const sharedType = provider.document.get("content", Y.XmlText) as Y.XmlText;
     return withListsReact(
       withListsPlugin(
@@ -251,7 +250,6 @@ const TextEditor = ({ id, name }: { id: UniqueIdentifier; name: string }) => {
       ref={containerRef}
       className="text-editor bg-slate-600 text-white rounded-b flex h-full justify-center overflow-y-auto"
     >
-      {/* {editor && ( */}
       <div className="px-5 w-full max-w-5xl">
         <Slate value={value} onChange={onChangeHandler} editor={editor}>
           {target && (
@@ -263,11 +261,9 @@ const TextEditor = ({ id, name }: { id: UniqueIdentifier; name: string }) => {
           )}
           <FormatToolbar containerRef={containerRef} />
           <DecoratedEditable />
-          {/* </RemoteCursorOverlay> */}
         </Slate>
         {/* <ConnectionToggle connected={connected} onClick={toggleConnection} /> */}
       </div>
-      {/* )} */}
     </div>
   );
 };
