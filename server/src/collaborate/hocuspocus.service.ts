@@ -8,20 +8,20 @@ import * as Y from 'yjs';
 import { debounce } from 'debounce';
 
 function JsonToArray(json) {
-  var ret = new Uint8Array(Object.keys(json).length);
-  for (var i = 0; i < Object.keys(json).length; i++) {
+  let ret = new Uint8Array(Object.keys(json).length);
+  for (let i = 0; i < Object.keys(json).length; i++) {
     ret[i] = json[i];
   }
   return ret;
 }
 
-var binArrayToJson = function (binArray) {
-  var str = '';
-  for (var i = 0; i < binArray.length; i++) {
-    str += String.fromCharCode(parseInt(binArray[i]));
+function binArrayToJson(binArray) {
+  let ret = {};
+  for (let i = 0; i < binArray.length; i++) {
+    ret[i] = parseInt(binArray[i]);
   }
-  return JSON.parse(str);
-};
+  return ret;
+}
 
 const prisma = new PrismaService();
 let debounced: any;
@@ -49,14 +49,11 @@ export class HocusPocusService {
           });
         },
         store: async ({ documentName, state }) => {
-          const ydoc = new Y.Doc();
-          console.log('store this document');
-          Y.applyUpdate(ydoc, state);
           prisma.documentData
             .update({
               where: { documentId: parseInt(documentName) },
               data: {
-                data: Y.encodeStateAsUpdate(ydoc) as any,
+                data: binArrayToJson(state) as any,
               },
             })
             .then((res) => {
@@ -100,6 +97,7 @@ export class HocusPocusService {
   });
 
   handleConnection(socket, req, id, context) {
+    console.log(socket);
     this.server.handleConnection(socket, req, id, context);
   }
 }

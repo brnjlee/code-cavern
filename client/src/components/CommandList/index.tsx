@@ -201,8 +201,8 @@ export const CommandList = ({
         <div
           key={value}
           className={clsx(
-            isSelected && "bg-slate-100",
-            "group flex p-1 rounded-lg items-center hover:bg-slate-100 transition-all"
+            isSelected && "bg-slate-700",
+            "group flex p-1 rounded-lg items-center hover:bg-slate-700 transition-all"
           )}
           role="button"
           tabIndex={0}
@@ -210,15 +210,15 @@ export const CommandList = ({
         >
           <div
             className={clsx(
-              isSelected && selectedClass,
+              isSelected && selectedClass + " text-slate-200",
               iconClass,
-              "transition-all flex items-center justify-center w-8 min-w-[2rem] h-8 bg-slate-100 rounded-lg mr-2"
+              "transition-all flex items-center justify-center w-8 min-w-[2rem] h-8 bg-slate-700 rounded-lg mr-2 group-hover:text-slate-200"
             )}
           >
             {icon}
           </div>
           <div className="flex flex-col justify-center">
-            <span className="text-sm font-semibold text-slate-600">
+            <span className="text-sm font-semibold text-slate-300">
               {label}
             </span>
             <span className="text-xs text-slate-400">{description}</span>
@@ -236,7 +236,7 @@ export const CommandList = ({
       }}
       className={clsx(
         mounted ? "scale-100 opacity-100" : "scale-75 opacity-0",
-        "command-list-open w-150 max-h-80 overflow-y-auto transition-scale origin-top-left absolute p-1 z-10 bg-white rounded-lg shadow-xl border border-slate-200 "
+        "command-list-open w-150 max-h-80 overflow-y-auto transition-scale origin-top-left absolute p-1 z-10 bg-slate-800 rounded-lg shadow-xl"
       )}
     >
       {commands.length ? (

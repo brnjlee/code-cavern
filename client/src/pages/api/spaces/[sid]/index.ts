@@ -33,7 +33,11 @@ export default async function handler(
       const space = await prisma.space.findFirst({
         where: { id },
         include: {
-          documents: true,
+          documents: {
+            orderBy: {
+              createdAt: "asc",
+            },
+          },
         },
       });
 

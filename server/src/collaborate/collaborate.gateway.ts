@@ -33,13 +33,13 @@ export class CollaborateGateway
     const decoded = await this.authService.validateJWT(req);
     if (!decoded) throw new WsException('Invalid token.');
     // UPDATE TO SPACEMEMBERS
-    // const user = await this.prisma.user.findFirst({
-    //   where: {
-    //     id: decoded.id,
-    //     spaces: { some: { documents: { some: { id: parseInt(params.id) } } } },
-    //   },
-    // });
-    // if (!user) throw new WsException('Invalid credentials.');
+    const user = await this.prisma.user.findFirst({
+      where: {
+        id: decoded.id,
+      },
+    });
+    console.log(user);
+    if (!user) throw new WsException('Invalid credentials.');
     this.users++;
     // Notify connected clients of current users
     this.server.emit('users', this.users);

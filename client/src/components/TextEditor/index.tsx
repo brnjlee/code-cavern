@@ -127,6 +127,7 @@ const TextEditor = ({ id, name }: { id: UniqueIdentifier; name: string }) => {
         onSynced: ({ state }) => {
           console.info(state);
         },
+        broadcast: false,
       }),
     [id]
   );

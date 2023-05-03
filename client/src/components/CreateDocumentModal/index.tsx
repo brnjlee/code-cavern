@@ -13,7 +13,7 @@ const options = [
     description: "Start writing in rich text",
     icon: <BsFileEarmarkTextFill />,
     iconClass:
-      "text-indigo-500 group-hover:bg-indigo-200 group-hover:text-indigo-600",
+      "text-indigo-500 group-hover:bg-indigo-600 group-hover:text-slate-200",
   },
   {
     value: "CODE",
@@ -21,7 +21,7 @@ const options = [
     description: "Develop code in any language",
     icon: <BsFileEarmarkCodeFill />,
     iconClass:
-      "text-green-600 group-hover:bg-green-200 group-hover:text-green-700",
+      "text-green-500 group-hover:bg-green-700 group-hover:text-slate-200",
   },
 ];
 const CreateDocumentModal = ({
@@ -47,7 +47,7 @@ const CreateDocumentModal = ({
   const renderOptions = options.map(
     ({ value, label, description, icon, iconClass }) => (
       <div
-        className="group flex p-1 rounded-lg w-full items-center hover:bg-slate-100 transition-all"
+        className="group flex p-1 rounded-lg w-full items-center hover:bg-slate-800 transition-all"
         role="button"
         tabIndex={0}
         onClick={() => createDocument(value)}
@@ -55,13 +55,13 @@ const CreateDocumentModal = ({
         <div
           className={clsx(
             iconClass,
-            "transition-all flex items-center justify-center w-8 min-w-[2rem] h-8 bg-slate-100 rounded-lg mr-2"
+            "transition-all flex items-center justify-center w-8 min-w-[2rem] h-8 bg-slate-800 rounded-lg mr-2"
           )}
         >
           {icon}
         </div>
         <div className="flex flex-col justify-center whitespace-nowrap overflow-hidden ">
-          <span className="text-sm font-semibold">{label}</span>
+          <span className="text-sm font-semibold text-slate-300">{label}</span>
           <span className="text-xs text-slate-400">{description}</span>
         </div>
       </div>
@@ -74,7 +74,7 @@ const CreateDocumentModal = ({
         show
           ? "opacity-100 visible scale-100 bottom-[4rem]"
           : "opacity-0 invisible scale-90 bottom-[3rem]",
-        "transition-all absolute w-[calc(100%-20px)] bg-white flex flex-col p-1 rounded-lg shadow-xl border border-slate-200"
+        "transition-all absolute w-[calc(100%-20px)] bg-slate-900 flex flex-col p-1 rounded-lg shadow-xl"
       )}
     >
       <div className="text-xs text-gray-400 p-1 mb-1 font-semibold">

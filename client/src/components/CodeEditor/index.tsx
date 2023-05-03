@@ -41,6 +41,7 @@ const CodeEditor = ({ id }: { id: UniqueIdentifier }) => {
         onSynced: ({ state }) => {
           console.info(state);
         },
+        broadcast: false,
       }),
     [id]
   );
